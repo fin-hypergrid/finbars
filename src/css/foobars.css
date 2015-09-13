@@ -1,0 +1,37 @@
+div.foobar-vertical, div.foobar-horizontal {
+    position: absolute;
+    background-color: brown;
+    margin: 3px;
+    opacity: .5;
+}
+div.foobar-vertical > .thumb, div.foobar-horizontal > .thumb {
+    position: absolute;
+    background-color: grey;
+    border-radius: 4px;
+    margin: 2px;
+    transition: background-color .25s;
+}
+div.foobar-vertical > .thumb.hover, div.foobar-horizontal > .thumb.hover {
+    background-color: white;
+    transition: background-color .25s;
+}
+
+div.foobar-vertical {
+    width: 11px;
+}
+div.foobar-vertical > .thumb {
+    bottom: 200px;
+    right: 0;
+    width: 7px;
+    height: 30px;
+}
+
+div.foobar-horizontal {
+    height: 11px;
+}
+div.foobar-horizontal > .thumb {
+    right: 200px;
+    bottom: 0;
+    height: 7px;
+    width: 30px;
+}
