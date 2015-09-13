@@ -1,9 +1,9 @@
-# rectangular
-Simple rectangle and point classes
+# FooBars
+Styleable scrollbars
 
 ## API documentation
 
-Detailed API docs can be found [here](http://openfin.github.io/rectangular/).
+Detailed API docs can be found [here](http://openfin.github.io/foobars/).
 
 ## Regarding submodules
 
