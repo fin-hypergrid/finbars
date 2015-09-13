@@ -3,7 +3,7 @@ Styleable scrollbars
 
 ## API documentation
 
-Detailed API docs can be found [here](http://openfin.github.io/foobars/).
+Detailed API docs can be found [here](http://openfin.github.io/foobars/FooBar.html).
 
 ## Regarding submodules
 
