@@ -1,0 +1,43 @@
+body {
+    background-color:#666;
+    font-family: sans-serif;
+    font-size: x-small;
+}
+canvas {
+    background-color: purple;
+}
+div.block {
+    display: inline-block;
+    text-align: center;
+}
+div.container {
+    position: relative;
+    margin: 25px;
+    width: 300px;
+    height: 300px;
+    background-color: beige;
+    font-weight: bold;
+    font-size: xx-large;
+    text-align: center;
+}
+div.scrollable {
+    overflow-x: scroll;
+    overflow-y: scroll;
+}
+div.foobars {
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+div.content {
+    position:absolute;
+    top:0;
+    height:100%;
+    width:100%;
+    opacity:.5;
+    overflow-y:hidden;
+}
+.foobar-test-panel { display: inline-block; background-color: #999; margin: 0; padding: 6px 0 6px 2.5em; text-align: left; width: 44%; border-radius: 6px; }
+.foobar-test-panel li { margin: .3em 0; }
+.foobar-test-panel .val { color: white; font-weight: bold }
+.foobar-test-panel span { margin: 0 .25em; padding: .1em .5em .15em; border-radius: 3px; border: 1px solid transparent; }
+.foobar-test-panel span.listening { border-color: yellow }

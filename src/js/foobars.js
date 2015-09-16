@@ -54,7 +54,7 @@
  * @property {string} [deltaProp='deltaY'] - The name of the wheel event object property containing the relevant wheel delta data. Useful values are `'deltaX'`, `'deltaY'`, or `'deltaZ'`. The default value shown, `'deltaY'`, is for vertical scrollbars; it becomes `'deltaX'` for horizontal scrollbars. You can give an explicit value here to override the default.
  */
 
-(function (module/*, exports*/) { // closure for when there's no Node.js (in which case define window.module)
+(function (module, exports) { // Closure supports Node-less client side includes with <script> tag.
 
     /**
      * @constructor FooBar
@@ -466,5 +466,5 @@
     // Interface
     module.exports = FooBar;
 
-
 })(module, module.exports);
+
