@@ -14,7 +14,8 @@ global.Element.prototype = {
     classList: {
         add: nullfunc
     },
-    appendChild: nullfunc
+    appendChild: nullfunc,
+    style: {}
 };
 global.document = {
     createElement: function() {
@@ -49,23 +50,23 @@ describe('require() returns an object that', function() {
         it('has a member `thumb` of type Element', function() {
             (foobar.thumb instanceof Element).should.be.true();
         });
-        describe('has a member `set`', function() {
-            it('is a function that', function() {
-                (typeof foobar.set).should.equal('function');
+        describe('has a member `index`', function() {
+            it('is a getter', function() {
+                (typeof Object.getOwnPropertyDescriptor(FooBar.prototype, 'index').get).should.equal('function');
             });
         });
-        describe('has a member `get`', function() {
-            it('is a function that', function() {
-                (typeof foobar.get).should.equal('function');
+        describe('has a member `index`', function() {
+            it('is a setter', function() {
+                (typeof Object.getOwnPropertyDescriptor(FooBar.prototype , 'index').set).should.equal('function');
             });
         });
         describe('has a member `resize`', function() {
-            it('is a function that', function() {
+            it('is a function', function() {
                 (typeof foobar.resize).should.equal('function');
             });
         });
         describe('has a member `close`', function() {
-            it('is a function that', function() {
+            it('is a function', function() {
                 (typeof foobar.close).should.equal('function');
             });
         });
