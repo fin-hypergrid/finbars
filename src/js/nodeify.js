@@ -2,15 +2,19 @@
  * Created by jonathan on 9/16/15.
  */
 
-module = {
+'use strict';
+
+/* eslint-env browser */
+
+window.module = {
     exports: {},
     modules: {},
     nodeify: function (moduleName) {
-        module.modules[moduleName] = module.exports;
-        module.exports = {};
+        window.module.modules[moduleName] = window.module.exports;
+        window.module.exports = {};
     }
 };
 
-require = function (moduleName) {
-    return module.modules[moduleName];
+window.require = function (moduleName) {
+    return window.module.modules[moduleName];
 };

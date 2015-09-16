@@ -1,6 +1,8 @@
+'use strict';
+
 (function (module, exports) { // Closure supports Node-less client side includes with <script> tag.
 
-    var FooBar = require("foobars");
+    var FooBar = require('foobars');
 
     exports.InitFoobarsWithRealContent = function (container, content) {
         var horzBar = new FooBar(1, content.width, {
@@ -52,10 +54,11 @@
         function renderVirtualContent(val) {
             var s = '';
             val = Math.min(val, this.max - 7);
-            for (var limit = val + 10; val < limit; ++val)
+            for (var limit = val + 10; val < limit; ++val) {
                 s += val + '<br>';
+            }
             this.options.content.innerHTML = s;
         }
-    }
+    };
 
 })(module, module.exports);

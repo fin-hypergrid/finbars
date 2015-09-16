@@ -54,7 +54,7 @@
  * @property {string} [deltaProp='deltaY'] - The name of the wheel event object property containing the relevant wheel delta data. Useful values are `'deltaX'`, `'deltaY'`, or `'deltaZ'`. The default value shown, `'deltaY'`, is for vertical scrollbars; it becomes `'deltaX'` for horizontal scrollbars. You can give an explicit value here to override the default.
  */
 
-(function (module, exports) { // Closure supports Node-less client side includes with <script> tag.
+(function (module) { // Closure supports Node-less client side includes with <script> tag.
 
     /**
      * @constructor FooBar
@@ -162,7 +162,7 @@
          * @returns {FooBar} Self for chaining.
          * @memberOf FooBar.prototype
          */
-        set index (idx) {
+        set index(idx) {
             idx = Math.min(this.max, Math.max(this.min, idx)); // clamp it
             var scaled = (idx - this.min) / (this.max - this.min) * this.thumbMax;
             this._setScroll(idx, scaled);
@@ -178,7 +178,7 @@
          * @returns {number} The current scrollbar index. Intentionally not rounded.
          * @memberOf FooBar.prototype
          */
-        get index () {
+        get index() {
             var scaled = (this.thumbBox[this.op.leadingEdge] - this.offset) / this.thumbMax;
             var idx = scaled * (this.max - this.min) + this.min;
             return idx;
@@ -191,7 +191,7 @@
          * @memberOf FooBar.prototype
          */
         _setScroll: function (idx, scaled) {
-            idx =  Math.round(idx);
+            idx = Math.round(idx);
 
             if (this.testPanelItem && 'val' in this.testPanelItem) {
                 this.testPanelItem.val.innerHTML = idx;
@@ -220,7 +220,7 @@
         resize: function (contentSize, position) {
             var bar = this.bar,
                 barBox = this.bar.parentElement.getBoundingClientRect(),
-                barSize = [this.op.size],
+                barSize = barBox[this.op.size],
                 container = bar.parentElement;
 
             if (typeof contentSize === 'object') {
@@ -245,10 +245,10 @@
 
             positionProps.forEach(function (key) {
                 if (key in position) {
-                    var val = position[key], n = Number(val);
+                    var val = position[key];
                     if (!isNaN(Number(val))) {
                         val += 'px';
-                    } else if (key == this.op.size && /%$/.test(val)) {
+                    } else if (key === this.op.size && /%$/.test(val)) {
                         // when bar size given as percentage and the bar has margins,convert to pixels.
                         // We do this because CSS does not consider margins when working percentages.
                         var style = window.getComputedStyle(bar),
