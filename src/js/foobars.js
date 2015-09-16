@@ -2,38 +2,104 @@
 
 /* eslint-env node, browser */
 
+/** @typedef {object} positionObjectType
+ *
+ * @desc Only enough of the following style properties for accurate placement need to be specified. These will of course override any styles already defined by stylesheets.
+ *
+ * Caveat: Percentage values can be used however be aware that this will be a percentage of the scrollbar's box size which is its content including padding, but excluding margins. Therefore, if your scrollbar has non-zero margins, the resulting scrollbar will be bigger than the container's content area, which is not what you want. In this case you must give an explict size in pixels.
+ *
+ * @property {number} [left]
+ * @property {number} [top]
+ * @property {number} [right]
+ * @property {number} [bottom]
+ * @property {number} [width]
+ * @property {number} [height]
+ */
+
+/** @typedef {function} foobarCallbackType
+ *
+ * @desc A callback function to be invoked whenever the scroll index changes, as follows:
+ *
+ * * **Explicit scrolling** caused by calls to the following FooBar methods:
+ *   * Called by the {@link FooBar|set} method
+ *   * Called by the {@link FooBar|resize} method
+ *
+ * * **Implicit scrolling** due to the following user interactions:
+ *   * Called repeatedly as user drags the scrollbar thumb
+ *   * Called repeatedly as user spins the mouse wheel while mouse pointer is positioned inside of the {@link FooBar|container} element
+ *   * Called once per mouse click in the page-up region above the thumb
+ *   * Called once per mouse click in the page-down region below the thumb
+ *
+ * @this The calling context (the `this` value) is the FooBar object returned by the constructor. See the members section of the {@link FooBar} page.
+ * @param {number} value - The scrollbar index, always a value between {@link FooBar|min} and {@link FooBar|max}.
+ */
+
+/** @typedef {object} foobarOptionsType
+ *
+ * @desc As an "options" object, all properties herein are optional. Omitted properties take on the default values shown. All options including any additional ("custom") options are available to the `onchange` callback function in the `this.options` object.
+ *
+ * @property {number} [orientation='vertical'] - Flavor of scrollbar to create. Useful values are `'vertical'` (the default) or `'horizontal'`.
+ *
+ * @property {foobarCallbackType} [onchange] - Callback function for scrolling. (See type definition for details and calling signature).
+ *
+ * @property {string} [cssClassPrefix='foobar'] - A string used to form the name of the CSS class referenced by the new scrollbar element. The class name will be the concatenation of:
+ * #. This string
+ * #. A hyphen character
+ * #. The value of the `orientation` option
+ *
+ * For example, `foobar-vertical` and `foobar-horizontal`.
+ *
+ * There should be defined CSS selectors using these names, as per the example in `src/css/foobars.css`.
+ *
+ * @property {string} [deltaProp='deltaY'] - The name of the wheel event object property containing the relevant wheel delta data. Useful values are `'deltaX'`, `'deltaY'`, or `'deltaZ'`. The default value shown, `'deltaY'`, is for vertical scrollbars; it becomes `'deltaX'` for horizontal scrollbars. You can give an explicit value here to override the default.
+ */
+
 (function (module/*, exports*/) { // closure for when there's no Node.js (in which case define window.module)
 
     /**
      * @constructor FooBar
      * @summary Create a scrollbar object.
-     * @desc In addition to creating this object, also creates the scrollbar `<div>...</div>` element with its single thumb child element.
+     * @desc In addition to creating this object, also creates the scrollbar `<div>...</div>` element ({@link FooBar|bar}) with its single thumb child element ({@link FooBar|thumb}).
      *
-     * It is the responsibility of the caller to insert the scrollbar element into the DOM.
-     *
-     * The `callback` function, if supplied, will be called repeatedly during implicit movement (by user interaction); or once per explicit movement (by calling `this.set()`).
      * @param {number} min - The minimum index value of the new scrollbar.
      * @param {number} max - The maximum index value of the new scrollbar.
-     * @param {function} [callback] - Function to be called during thumb movement.
-     * @param {number} [orientation='vertical'] - What kind of scrollbar to create.
+     * @param {foobarOptionsType} [options={}] - Options object. See the type definition for details.
      */
-    function FooBar(min, max, callback, orientation) {
-        this.callback = callback;
+    function FooBar(min, max, options) {
+        /**
+         * @name options
+         * @type {foobarOptionsType}
+         * @memberOf FooBar.prototype
+         */
+        this.options = options = options || {};
 
-        this.testPanel = appendTestPanelItem('mousedown', 'mousemove', 'mouseup', 'val');
+        if (!options.orientation) {
+            options.orientation = 'vertical';
+        } else if (!/^vertical|horizontal$/.test(options.orientation)) {
+            throw 'Invalid value for orientation option.';
+        }
 
-        this._op = orientationProperties[orientation = orientation || 'vertical'];
-        this.bound = {};
-        for (var key in handlers) {
-            this.bound[key] = handlers[key].bind(this);
+        this.op = orientationProps[options.orientation];
+
+        if (!options.deltaProp) {
+            options.deltaProp = this.op.delta;
+        } else if (!/^delta[XYZ]$/.test(options.deltaProp)) {
+            throw 'Invalid value for deltaProp option.';
+        }
+
+        this._bound = {};
+        for (var key in handlersToBeBound) {
+            this._bound[key] = handlersToBeBound[key].bind(this);
         }
 
         /**
          * @abstract
+         * @readonly
          * @name min
          * @summary The minimum scroll value.
-         * @desc This value is defined by the constructor.
-         * This is the lowest value acceptable to `this.set()` and returnable by `this.get()`.
+         * @desc This value is defined by the constructor. This is the lowest value acceptable to `this.set()` and returnable by `this.get()`.
+         *
+         * As implemented, this value should not be modified after instantiation. This could be remedied by making a setter that calls _calcThumb to reposition the thumb.
          * @type {number}
          * @memberOf FooBar.prototype
          */
@@ -41,10 +107,12 @@
 
         /**
          * @abstract
+         * @readonly
          * @name max
          * @summary The maximum scroll value.
-         * @desc This value is defined by the constructor.
-         * This is the highest value acceptable to `this.set()` and returnable by `this.get()`.
+         * @desc This value is defined by the constructor. This is the highest value acceptable to `this.set()` and returnable by `this.get()`.
+         *
+         * As implemented, this value should not be modified after instantiation. This could be remedied by making a setter that calls _calcThumb to reposition the thumb.
          * @type {number}
          * @memberOf FooBar.prototype
          */
@@ -60,9 +128,10 @@
          */
         this.thumb = document.createElement('div');
         this.thumb.classList.add('thumb');
-        this.thumb.onclick = this.bound.shortStop;
-        this.thumb.onmouseover = this.bound.onmouseover;
-        this.thumb.onmouseout = this.bound.onmouseout;
+        this.thumb.style.position = 'absolute';
+        this.thumb.onclick = this._bound.shortStop;
+        this.thumb.onmouseover = this._bound.onmouseover;
+        this.thumb.onmouseout = this._bound.onmouseout;
 
         /**
          * @abstract
@@ -73,25 +142,30 @@
          * @memberOf FooBar.prototype
          */
         this.bar = document.createElement('div');
-        this.bar.classList.add('foobar-' + orientation);
+        this.bar.classList.add((options.cssClassPrefix || 'foobar') + '-' + options.orientation);
+        this.bar.style.position = 'absolute';
         this.bar.appendChild(this.thumb);
-        this.bar.onclick = this.bound.onclick;
+        this.bar.onclick = this._bound.onclick;
+
+        if (options.container && options.position) {
+            options.container.appendChild(this.bar);
+            this.resize();
+        }
     }
 
     FooBar.prototype = {
 
         /**
          * @summary Set the value of the scrollbar.
-         * @desc This method calculates the position of the scroll thumb from the given `index`, which is clamped to `[min..max]`.
-         * If defined, `callback` is then called, typically to adjust the viewport or whatever.
+         * @desc This method calculates the position of the scroll thumb from the given `index`, which is clamped to `[min..max]`. If the `onchange` callback is defined then it is called, typically to adjust the viewport or whatever.
          * @param {number} index
          * @returns {FooBar} Self for chaining.
          * @memberOf FooBar.prototype
          */
-        set: function (index) {
-            index = Math.min(this.max, Math.max(this.min, Math.round(index))); // clamp it
-            var scaled = Math.round((index - this.min) / (this.max - this.min) * this.maxThumb);
-            this._setScroll(index, scaled);
+        set index (idx) {
+            idx = Math.min(this.max, Math.max(this.min, idx)); // clamp it
+            var scaled = (idx - this.min) / (this.max - this.min) * this.thumbMax;
+            this._setScroll(idx, scaled);
             this._calcThumb();
             return this;
         },
@@ -100,77 +174,104 @@
          * @summary Get the current value of the scrollbar.
          * @desc Return values will be in the range `[min..max]`.
          * This method calculates the current index from the thumb position.
-         * Call this as an alternative to (or in addition to) setting the `callback`.
-         * @returns {number} The current scrollbar index.
+         * Call this as an alternative to (or in addition to) using the `onchange` callback.
+         * @returns {number} The current scrollbar index. Intentionally not rounded.
          * @memberOf FooBar.prototype
          */
-        get: function () {
-            var scaled = (this.thumbBox[this._op.side] - this.offset) / this.maxThumb;
-            var index = Math.round(scaled * (this.max - this.min)) + this.min;
-            return index;
+        get index () {
+            var scaled = (this.thumbBox[this.op.leadingEdge] - this.offset) / this.thumbMax;
+            var idx = scaled * (this.max - this.min) + this.min;
+            return idx;
         },
 
         /*
          * @private
-         * @param index
+         * @param idx
          * @param scaled
          * @memberOf FooBar.prototype
          */
-        _setScroll: function (index, scaled) {
-            if (this.testPanel.val) {
-                this.testPanel.val.innerHTML = index;
+        _setScroll: function (idx, scaled) {
+            idx =  Math.round(idx);
+
+            if (this.testPanelItem && 'val' in this.testPanelItem) {
+                this.testPanelItem.val.innerHTML = idx;
             }
 
-            if (this.callback) {
-                this.callback.call(this, index);
+            if (this.options.onchange) {
+                this.options.onchange.call(this, idx);
             }
 
-            this.thumb.style[this._op.side] = scaled + 'px';
+            this.thumb.style[this.op.leadingEdge] = scaled + 'px';
         },
 
         /**
          * @summary Recalculate thumb position.
-         * @desc Call this method once after appending `yourFooBar.bar` to the DOM.
-         * Call again each time the parent element is resized.
-         * @param {object} [rect] - Object with one or more of the keys in `positionProperties'. If omitted, bar will be positioned along right edge of parent element for "vertical" bars and bottom edge of parent element for "horizontal" bars.
-         * @param {Element} [container] - Element from which to emit mousewheel events. Typically the parent element mentioned above though not necessarilly.
+         * @desc Call this method once after inserting your scrollbar into the DOM. Note that the constructor will do this for you if you supply a `container` element in the options object.
+         *
+         * In addition, you must call this method again each time the parent element is resized.
+         *
+         * @param {positionObjectType} [position=this.options.position] - Object with one or more of the properties in `foorbarOptionsType'.
+         *
+         * If omitted and `this.options.position` also undefined, defaults shall be as documented for `foobarOptionsType.position`.
+         *
          * @returns {FooBar} Self for chaining.
          * @memberOf FooBar.prototype
          */
-        resize: function (rect, container) {
-            var bar = this.bar;
+        resize: function (contentSize, position) {
+            var bar = this.bar,
+                barBox = this.bar.parentElement.getBoundingClientRect(),
+                barSize = [this.op.size],
+                container = bar.parentElement;
 
-            if (!rect) {
-                rect = {};
-                rect[this._op.edge] = rect[this._op.side] = 0;
-                rect[this._op.size] = '100%';
+            if (typeof contentSize === 'object') {
+                position = contentSize;
+                contentSize = undefined;
+            }
+
+            if (contentSize) {
+                this.options.contentSize = contentSize;
             }
 
             if (!bar.parentElement) {
                 throw 'FooBar.resize() called before DOM insertion.';
             }
 
-            positionProperties.forEach(function (key) {
-                if (key in rect) {
-                    var val = rect[key];
-                    if (/^\d+$/.test(val)) { val += 'px'; }
+            position = position || this.options.position;
+
+            if (!position) {
+                position = this.options.position = {};
+                position[this.op.leadingEdge] = position[this.op.trailingEdge] = 0;
+            }
+
+            positionProps.forEach(function (key) {
+                if (key in position) {
+                    var val = position[key], n = Number(val);
+                    if (!isNaN(Number(val))) {
+                        val += 'px';
+                    } else if (key == this.op.size && /%$/.test(val)) {
+                        // when bar size given as percentage and the bar has margins,convert to pixels.
+                        // We do this because CSS does not consider margins when working percentages.
+                        var style = window.getComputedStyle(bar),
+                            margins = parseInt(style[this.op.marginTrailing]) + parseInt(style[this.op.marginTrailing]);
+                        if (margins) {
+                            val = parseInt(val, 10) / 100 * (barSize + margins) + 'px';
+                        }
+                    }
                     bar.style[key] = val;
                 }
             });
 
+            var oldIndex = this.thumbBox ? this.index : 0;
+
+            this.testPanelItem = addTestPanelItem(
+                container.parentElement.getElementsByClassName('foobar-test-panel')[0] ||
+                document.getElementsByClassName('foobar-test-panel')[0]
+            );
+
             this._calcThumb();
+            this.index = oldIndex;
 
-            if (container !== this.container) {
-                if (this.container) {
-                    this.container.removeEventListener('wheel', this.bound.onwheel);
-                }
-
-                this.container = container;
-
-                if (this.container) {
-                    this.container.addEventListener('wheel', this.bound.onwheel);
-                }
-            }
+            container.addEventListener('wheel', this._bound.onwheel);
 
             return this;
         },
@@ -185,8 +286,8 @@
             this._removeEvt('mousemove');
             this._removeEvt('mouseup');
 
-            if (this.container) {
-                this.container._removeEvt('wheel', this.bound.onwheel);
+            if (this.options.container) {
+                this.options.container._removeEvt('wheel', this._bound.onwheel);
             }
 
             this.bar.onclick =
@@ -196,41 +297,44 @@
         },
 
         _calcThumb: function () {
-            var keys = this._op;
+            var op = this.op;
             var thumbComp = window.getComputedStyle(this.thumb);
-            var marginTrailing = parseInt(thumbComp[keys.marginTrailing]);
-            var marginLeading = parseInt(thumbComp[keys.marginLeading]);
+            var thumbMarginLeading = parseInt(thumbComp[op.marginLeading]);
+            var thumbMarginTrailing = parseInt(thumbComp[op.marginTrailing]);
+            var thumbMargins = thumbMarginLeading + thumbMarginTrailing;
             var barBox = this.bar.getBoundingClientRect();
-            var barSize = barBox[keys.size];
-            var thumbSize = Math.round(barSize / (this.max - this.min + 1));
-            this.thumb.style[keys.size] = Math.max(20, thumbSize) + 'px';
+            var barSize = barBox[op.size];
+            var thumbSize = 20; // Math.round(barSize / this.options.pixelsPerUnit / (this.max + this.pageSize - this.min + 1) * barSize);
+            this.thumb.style[op.size] = Math.max(20, thumbSize) + 'px';
             this.thumbBox = this.thumb.getBoundingClientRect();
-            this.maxThumb = barBox[keys.size] - this.thumbBox[keys.size] - marginLeading - marginTrailing;
-            this.offset = barBox[keys.side] + marginLeading;
+            this.thumbMax = barSize - this.thumbBox[op.size] - thumbMargins;
+            this.offset = barBox[op.leadingEdge] + thumbMarginLeading;
         },
 
         _addEvt: function (evtName) {
-            var spy = this.testPanel && this.testPanel[evtName];
+            var spy = this.testPanelItem && this.testPanelItem[evtName];
             if (spy) { spy.classList.add('listening'); }
-            window.addEventListener(evtName, this.bound['on' + evtName]);
+            window.addEventListener(evtName, this._bound['on' + evtName]);
         },
 
         _removeEvt: function (evtName) {
-            var spy = this.testPanel && this.testPanel[evtName];
+            var spy = this.testPanelItem && this.testPanelItem[evtName];
             if (spy) { spy.classList.remove('listening'); }
-            window.removeEventListener(evtName, this.bound['on' + evtName]);
+            window.removeEventListener(evtName, this._bound['on' + evtName]);
         }
     };
 
-    // DOM event handlers - do not use raw; these need to be bound to a FooBar instance
+    // The following DOM event handlers to be bound to a FooBar instance as context.
+    // In other words, once they're bound, the `this` in these handlers shall refer
+    // to the FooBar object and not to the event emitter. "Do not consume raw."
 
-    var handlers = {
+    var handlersToBeBound = {
         shortStop: function (evt) {
             evt.stopPropagation();
         },
 
         onwheel: function (evt) {
-            this.set(this.get() + evt[this._op.delta] / 5);
+            this.index += evt[this.options.deltaProp];
             evt.stopPropagation();
             evt.preventDefault();
         },
@@ -238,30 +342,28 @@
         onclick: function (evt) {
             var goingUp = evt.y < this.thumbBox.top;
 
-            if (this.testPanel.val) {
-                this.testPanel.val.innerHTML = goingUp ? 'PgUp' : 'PgDn';
+            if (this.testPanelItem.val) {
+                this.testPanelItem.val.innerHTML = goingUp ? 'PgUp' : 'PgDn';
             }
 
-            this.set(this.get() + (goingUp ? -1 : 1));
+            this.index = this.index + (goingUp ? -1 : 1);
         },
 
-        onmouseover: function (evt) {
+        onmouseover: function () {
             this.thumb.classList.add('hover');
             this._addEvt('mousedown');
-            evt.stopPropagation();
         },
 
-        onmouseout: function (evt) {
+        onmouseout: function () {
             this._removeEvt('mousedown');
             this.thumb.classList.remove('hover');
-            evt.stopPropagation();
         },
 
         onmousedown: function (evt) {
             this.thumb.onmouseout = null;
             this._removeEvt('mousedown');
 
-            this.pinOffset = evt[this._op.axis] - this.thumbBox[this._op.side] + this.offset;
+            this.pinOffset = evt[this.op.axis] - this.thumbBox[this.op.leadingEdge] + this.offset;
             document.documentElement.style.cursor = 'default';
 
             this._addEvt('mousemove');
@@ -272,10 +374,10 @@
         },
 
         onmousemove: function (evt) {
-            var scaled = Math.min(this.maxThumb, Math.max(0, evt[this._op.axis] - this.pinOffset));
-            var index = Math.round(scaled / this.maxThumb * (this.max - this.min)) + this.min;
+            var scaled = Math.min(this.thumbMax, Math.max(0, evt[this.op.axis] - this.pinOffset));
+            var idx = scaled / this.thumbMax * (this.max - this.min) + this.min;
 
-            this._setScroll(index, scaled);
+            this._setScroll(idx, scaled);
 
             evt.stopPropagation();
             evt.preventDefault();
@@ -293,10 +395,10 @@
             ) {
                 evt.stopPropagation();
             } else {
-                this.bound.onmouseout(evt);
+                this._bound.onmouseout(evt);
             }
 
-            this.thumb.onmouseout = this.bound.onmouseout;
+            this.thumb.onmouseout = this._bound.onmouseout;
 
             evt.preventDefault();
         }
@@ -304,42 +406,46 @@
 
     /**
      * @private
-     * @function appendTestPanelItem
+     * @function addTestPanelItem
      * @summary Append a test panel element.
      * @desc If there is a test panel in the DOM (typically an `<ol>...</ol>` element) with an ID of `foobar-test-panel`, an `<li>...</li>` element will be created and appended to it. This new element will contain a span for each class name given.
      *
      * You should define a CSS selector `.listening` for these spans. This class will be added to the spans to alter their appearance when a listener is added with that class name (prefixed with 'on').
      *
      * (This is an internal function that is called once by the constructor on every instantiation.)
-     * @param {...string} className - Class names for spans.
+     * @param {...string} className - A class names for each of your spans.
      * @returns {Element|undefined} The appended `<li>...</li>` element or `undefined` if there is no test panel.
      */
-    function appendTestPanelItem() {
-        var list = document.getElementById('foobar-test-panel');
-        if (list) {
-            var classNames = Array.prototype.slice.call(arguments);
+    function addTestPanelItem(testPanelElement) {
+        var element;
 
+        if (testPanelElement) {
             var item = document.createElement('li');
-            classNames.forEach(function (prop) {
-                item.innerHTML += '<span class="' + prop + '">' + prop.replace('mouse', '') + '</span>';
-            });
-            list.appendChild(item);
+            var testPanelItemPartNames = [ 'mousedown', 'mousemove', 'mouseup', 'val' ];
 
-            var element = {};
-            classNames.forEach(function (prop) {
-                element[prop] = item.getElementsByClassName(prop)[0];
+            testPanelItemPartNames.forEach(function (partName) {
+                item.innerHTML += '<span class="' + partName + '">' + partName.replace('mouse', '') + '</span>';
+            });
+
+            testPanelElement.appendChild(item);
+
+            element = {};
+            testPanelItemPartNames.forEach(function (partName) {
+                element[partName] = item.getElementsByClassName(partName)[0];
             });
         }
+
         return element;
     }
 
-    var positionProperties = [ 'top', 'left', 'right', 'bottom', 'width', 'height' ];
+    var positionProps = [ 'top', 'left', 'right', 'bottom', 'width', 'height' ];
 
-    var orientationProperties = {
+    var orientationProps = {
         vertical: {
             axis: 'pageY',
-            side: 'top',
-            edge: 'right',
+            leadingEdge: 'top',
+            trailingEdge: 'bottom',
+            side: 'right',
             size: 'height',
             marginLeading: 'marginTop',
             marginTrailing: 'marginBottom',
@@ -347,8 +453,9 @@
         },
         horizontal: {
             axis: 'pageX',
-            side: 'left',
-            edge: 'bottom',
+            leadingEdge: 'left',
+            trailingEdge: 'right',
+            side: 'bottom',
             size: 'width',
             marginLeading: 'marginLeft',
             marginTrailing: 'marginRight',
