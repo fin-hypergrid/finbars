@@ -1,0 +1,23 @@
+{
+  "name": "foobars",
+  "version": "0.9.0",
+  "homepage": "https://github.com/openfin/foobars",
+  "authors": [
+    "Jonathan Eiten <jonathan@openfin.co>"
+  ],
+  "main": "src/index.html",
+  "moduleType": [
+    "globals"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "mnm": "*"
+  }
+}

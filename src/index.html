@@ -7,33 +7,56 @@
     <link rel="stylesheet" type="text/css" href="css/foobars.css"/>
     <link rel="stylesheet" type="text/css" href="css/example.css"/>
 
-    <script src="js/nodeify.js"></script>
+    <script src="../bower_components/mnm/src/js/mnm.js"></script>
 
     <script src="js/foobars.js"></script>
-    <script> window.module.nodeify('foobars'); </script>
+    <script> module.mnm('foobars'); </script>
 
     <script src="js/example.js"></script>
-    <script> window.module.nodeify('example'); </script>
+    <script> module.mnm('example'); </script>
 
     <script>
         window.onload = function () {
             var example = require('example');
 
-            var container;
+            var container = document.getElementById('real');
+            var content = container.getElementsByTagName('img')[0];
+            example.InitFoobarsWithRealContent(container, content);
 
-            example.InitFoobarsWithRealContent(
-                container = document.getElementById('real'),
-                container.getElementsByTagName('img')[0]
-            );
-
-            example.InitFoobarsWithVirtualContent(
-                container = document.getElementById('virt'),
-                container.getElementsByClassName('content')
-            );
+            container = document.getElementById('virtual');
+            var contents = container.getElementsByClassName('content');
+            example.InitFoobarsWithVirtualContent(container, contents);
         };
     </script>
 </head>
 <body>
+
+    <div class="block">
+        <h1>foobars with real content</h1>
+        <fieldset>
+            <legend>Listening for</legend>
+            <ol class="real test-panel"></ol>
+        </fieldset>
+        <div id="real" class="container foobars">
+            <!-- <canvas width="400" height="400"></canvas> -->
+            <img style="position:absolute" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg/687px-Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg" />
+        </div>
+        &nbsp;
+    </div>
+
+    <div class="block">
+        <h1>foobars with virtual content</h1>
+        <fieldset>
+            <legend>Listening for</legend>
+            <ol class="virtual test-panel"></ol>
+        </fieldset>
+        <div id="virtual" class="container">
+            <!-- <canvas width="400" height="400"></canvas> -->
+            <div class="content"></div>
+            <div class="content"></div>
+        </div>
+        &nbsp;
+    </div>
 
     <div class="block">
         <h1>system scrollbars</h1>
@@ -44,25 +67,5 @@
         &nbsp;
     </div>
 
-    <div class="block">
-        <h1>foobars with real content</h1>
-        <ol class="foobar-test-panel"></ol>
-        <div id="real" class="container foobars">
-            <!-- <canvas width="400" height="400"></canvas> -->
-            <img style="position:absolute" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg/687px-Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg" />
-        </div>
-        &nbsp;
-    </div>
-
-    <div class="block">
-        <h1>foobars with virtual content</h1>
-        <ol class="foobar-test-panel"></ol>
-        <div id="virt" class="container">
-            <!-- <canvas width="400" height="400"></canvas> -->
-            <div class="content" style="color:blue; transform: rotate(-90deg); -webkit-transform: rotate(-90deg)"></div>
-            <div class="content" style="color:red"></div>
-        </div>
-        &nbsp;
-    </div>
 </body>
 </html>

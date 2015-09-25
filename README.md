@@ -48,7 +48,7 @@ You can style your scrollbars with CSS. You can either redefine the existing sel
 
 Your styles should specify the size, color, and opacity of the scrollbar and its thumb.
 
-NOTE: The only CSS style that is required is `position: absolute` which is set by the constructor, overriding any value from your selectors. You can also specify the initial position of the thumb (typically at `top: 0` for vertical scrollbars and `left: 0` for horizontal scrollbars).
+NOTE: The only CSS style that is required is `position: absolute` which is set by the constructor, overriding any value from your stylesheets. You can also specify the initial position of the thumb (typically at `top: 0` for vertical scrollbars and `left: 0` for horizontal scrollbars).
 
 CAUTION: Be sure your existing CSS selectors do not resolve to the scrollbar's element, which consists of a `<div>...</div>` with a single nested `<div>...</div>` for the thumb.
 
@@ -91,3 +91,5 @@ This is a modified Node module; its contents are inside a closure. Although this
     delete window.module;
 </script>
 ```
+
+Alternatively, you can use nodeify.js which does something similar but allows your modules to reference each other with a provided `require()` function. This is a lightweight alternative to using browserify (although there is not file concatenation involved).
