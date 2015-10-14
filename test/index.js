@@ -31,18 +31,22 @@ describe('require() returns an object that', function() {
         (typeof FooBar).should.equal('function');
     });
     describe('when used as a constructor, returns an API that', function() {
-        var spy, foobar;
+        var spy, options, foobar;
         beforeEach(function() {
-            foobar = new FooBar(33, 55);
+            options = {
+                min: 33,
+                max: 55
+            };
+            foobar = new FooBar(options);
         });
         it('is a Foobar', function() {
             (foobar instanceof FooBar).should.be.true();
         });
-        it('has a member `min` === 1st constructor param', function() {
-            foobar.min.should.equal(33);
+        it('has a member `min`', function() {
+            foobar.min.should.equal(options.min);
         });
         it('has a member `max` === 2nd constructor param', function() {
-            foobar.max.should.equal(55);
+            foobar.max.should.equal(options.max);
         });
         it('has a member `bar` of type Element', function() {
             (foobar.bar instanceof Element).should.be.true();

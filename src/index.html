@@ -7,13 +7,13 @@
     <link rel="stylesheet" type="text/css" href="css/foobars.css"/>
     <link rel="stylesheet" type="text/css" href="css/example.css"/>
 
-    <script src="../bower_components/mnm/src/js/mnm.js"></script>
+    <script src="/bower_components/mnm/src/js/mnm.js"></script>
 
     <script src="js/foobars.js"></script>
-    <script> module.mnm('foobars'); </script>
+    <script> module.cache('foobars'); </script>
 
     <script src="js/example.js"></script>
-    <script> module.mnm('example'); </script>
+    <script> module.cache('example'); </script>
 
     <script>
         window.onload = function () {
@@ -21,7 +21,39 @@
 
             var container = document.getElementById('real');
             var content = container.getElementsByTagName('img')[0];
-            example.InitFoobarsWithRealContent(container, content);
+            var resize = example.InitFoobarsWithRealContent(container, content);
+
+            (function(container, resize) {
+                var resizer = container.parentElement.getElementsByClassName('resizer')[0],
+                    rect = resizer.getBoundingClientRect(),
+                    style = window.getComputedStyle(resizer),
+                    box = container.getBoundingClientRect();
+                resizer.style.left = box.right + window.scrollX - rect.width + parseInt(style.borderRightWidth) + 'px';
+                resizer.style.top = box.bottom + window.scrollY - rect.height + parseInt(style.borderBottomWidth) + 'px';
+                resizer.onmousedown = function onmousedown(evt) {
+                    var pin = {
+                        x: evt.x,
+                        y: evt.y
+                    };
+                    var rect = this.getBoundingClientRect();
+                    evt.stopPropagation();
+                    evt.preventDefault();
+                    this.onmousedown = null;
+                    this.onmousemove = function (evt) {
+                        var dx = evt.x - pin.x,
+                            dy = evt.y - pin.y;
+                        this.style.left = rect.left + window.scrollX + dx + 'px';
+                        this.style.top = rect.top + window.scrollY + dy + 'px';
+                        container.style.width = box.width + dx + 'px';
+                        container.style.height = box.height + dy + 'px';
+                        resize();
+                        this.onmouseup = function () {
+                            this.onmouseup = this.onmousemove = null;
+                            this.onmousedown = onmousedown;
+                        }
+                    }
+                }
+            })(container, resize);
 
             container = document.getElementById('virtual');
             var contents = container.getElementsByClassName('content');
@@ -41,6 +73,7 @@
             <!-- <canvas width="400" height="400"></canvas> -->
             <img style="position:absolute" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg/687px-Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg" />
         </div>
+        <div class="resizer"></div>
         &nbsp;
     </div>
 
@@ -58,7 +91,7 @@
         &nbsp;
     </div>
 
-    <div class="block">
+    <div class="block" style="vertical-align: bottom">
         <h1>system scrollbars</h1>
         <div class="container scrollable">
             <!-- <canvas width="400" height="400"></canvas> -->

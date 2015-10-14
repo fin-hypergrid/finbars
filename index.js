@@ -99,6 +99,7 @@
     // This closure supports NodeJS-less client side includes with <script> tags. See https://github.com/joneit/mnm.
 
     /* inject:css */
+    (function(){var a="div.foobar-horizontal,div.foobar-vertical{position:absolute;margin:3px}div.foobar-horizontal>.thumb,div.foobar-vertical>.thumb{position:absolute;background-color:#d3d3d3;-webkit-box-shadow:0 0 1px #000;-moz-box-shadow:0 0 1px #000;box-shadow:0 0 1px #000;border-radius:4px;margin:2px;opacity:.4;transition:opacity .5s}div.foobar-horizontal>.thumb.hover,div.foobar-vertical>.thumb.hover{opacity:1;transition:opacity .5s}div.foobar-vertical{top:0;bottom:0;right:0;width:11px}div.foobar-vertical>.thumb{top:0;right:0;width:7px}div.foobar-horizontal{left:0;right:0;bottom:0;height:11px}div.foobar-horizontal>.thumb{left:0;bottom:0;height:7px}",b=document.createElement("style"),head=document.head||document.getElementsByTagName("head")[0];b.type="text/css";if(b.styleSheet)b.styleSheet.cssText=a;else b.appendChild(document.createTextNode(a));head.insertBefore(b,head.firstChild)})();
     /* endinject */
 
     /**

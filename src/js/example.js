@@ -23,8 +23,14 @@
         container.appendChild(horzBar.bar);
         container.appendChild(vertBar.bar);
 
-        horzBar.resize();
-        vertBar.resize();
+        resize();
+
+        function resize() {
+            horzBar.resize();
+            vertBar.resize();
+        }
+
+        return resize;
     };
 
     exports.InitFoobarsWithVirtualContent = function (container, contents) {

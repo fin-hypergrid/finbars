@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>foobars test harness</title>
+
+    <style>
+        /* This CSS is for the test harness. The scrollbar code itself does not depend on this stylesheet. */
+        body {
+            background-color: #666;
+            font-family: sans-serif;
+            font-size: x-small;
+        }
+        canvas {
+            background-color: purple;
+        }
+        div.block {
+            display: inline-block;
+            text-align: center;
+            vertical-align: top;
+        }
+        fieldset {
+            display: inline-block;
+            width: 60%;
+            border: 2px solid #aaa;
+            border-radius: 8px;
+            text-align: left;
+            color: #aaa;
+            padding: 0 2em;
+            letter-spacing: 1px;
+        }
+        legend {
+            padding: 0 .5em;
+        }
+        .test-panel ul {
+            margin: 0;
+            padding: 6px 0 6px 2.5em;
+        }
+        div.container {
+            position: relative;
+            margin: 25px;
+            width: 300px;
+            height: 300px;
+            background-color: beige;
+            font-weight: bold;
+            font-size: xx-large;
+            text-align: center;
+        }
+        div.scrollable {
+            overflow-x: scroll;
+            overflow-y: scroll;
+        }
+        div.foobars {
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+        div.content {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            opacity: .5;
+            overflow-y: hidden;
+            color: red;
+        }
+        div.content:first-child {
+            color: green;
+            transform: rotate(-90deg);
+            -webkit-transform: rotate(-90deg)
+        }
+        div.resizer {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-right: 3px solid lightgreen;
+            border-bottom: 3px solid lightgreen;
+            cursor: se-resize;
+        }
+        .test-panel { margin: 1.5em 0 2em 1.5em; padding: 0; }
+        .test-panel li { margin: 1em 0; }
+        .test-panel .val { font-weight: bold; }
+        .test-panel span { margin: 0 .25em; padding: .1em .5em .15em; border-radius: 3px; border: 1px solid transparent; }
+        .test-panel span:last-child:before { content: '\25ba\a0'; font-size: smaller; }
+        .test-panel span.listening { border-color: yellow }
+    </style>
+
+    <script src="https://openfin.github.io/foobars/foobars.js"></script>
+
+    <script>
+        var barStyles = { trailing: 11 };
+
+        function InitFoobarsWithRealContent(container, content) {
+            var horzBar = new FooBar({
+                orientation: 'horizontal',
+                classPrefix: 'real',
+                barStyles: barStyles,
+                content: content
+            });
+
+            var vertBar = new FooBar({
+                orientation: 'vertical',
+                classPrefix: 'real',
+                barStyles: barStyles,
+                content: content
+            });
+
+            container.appendChild(horzBar.bar);
+            container.appendChild(vertBar.bar);
+
+            resize();
+
+            function resize() {
+                horzBar.resize();
+                vertBar.resize();
+            }
+
+            return resize;
+        };
+
+        function InitFoobarsWithVirtualContent(container, contents) {
+            var horzBar = new FooBar({
+                min: 1001,
+                max: 99999,
+                increment: 8,
+                orientation: 'horizontal',
+                classPrefix: 'virtual',
+                barStyles: barStyles,
+                onchange: renderVirtualContent,
+                content: contents[0]
+            });
+
+            var vertBar = new FooBar({
+                min: 1001,
+                max: 99999,
+                increment: 8,
+                orientation: 'vertical',
+                classPrefix: 'virtual',
+                barStyles: barStyles,
+                onchange: renderVirtualContent,
+                content: contents[1]
+            });
+
+            container.appendChild(horzBar.bar);
+            container.appendChild(vertBar.bar);
+
+            horzBar.resize();
+            vertBar.resize();
+
+            function renderVirtualContent(idx) {
+                var s = '';
+                idx = Math.min(idx, this.max - 7);
+                for (var limit = idx + 10; idx < limit; ++idx) {
+                    s += idx + '<br>';
+                }
+                this.content.innerHTML = s;
+            }
+        };
+
+        window.onload = function () {
+            var example = require('example');
+
+            var container = document.getElementById('real');
+            var content = container.getElementsByTagName('img')[0];
+            var resize = InitFoobarsWithRealContent(container, content);
+
+            (function(container, resize) {
+                var resizer = container.parentElement.getElementsByClassName('resizer')[0],
+                    rect = resizer.getBoundingClientRect(),
+                    style = window.getComputedStyle(resizer),
+                    box = container.getBoundingClientRect();
+                resizer.style.left = box.right + window.scrollX - rect.width + parseInt(style.borderRightWidth) + 'px';
+                resizer.style.top = box.bottom + window.scrollY - rect.height + parseInt(style.borderBottomWidth) + 'px';
+                resizer.onmousedown = function onmousedown(evt) {
+                    var pin = {
+                        x: evt.x,
+                        y: evt.y
+                    };
+                    var rect = this.getBoundingClientRect();
+                    evt.stopPropagation();
+                    evt.preventDefault();
+                    this.onmousedown = null;
+                    this.onmousemove = function (evt) {
+                        var dx = evt.x - pin.x,
+                            dy = evt.y - pin.y;
+                        this.style.left = rect.left + window.scrollX + dx + 'px';
+                        this.style.top = rect.top + window.scrollY + dy + 'px';
+                        container.style.width = box.width + dx + 'px';
+                        container.style.height = box.height + dy + 'px';
+                        resize();
+                        this.onmouseup = function () {
+                            this.onmouseup = this.onmousemove = null;
+                            this.onmousedown = onmousedown;
+                        }
+                    }
+                }
+            })(container, resize);
+
+            container = document.getElementById('virtual');
+            var contents = container.getElementsByClassName('content');
+            InitFoobarsWithVirtualContent(container, contents);
+        };
+    </script>
+</head>
+<body>
+
+    <div class="block">
+        <h1>foobars with real content</h1>
+        <fieldset>
+            <legend>Listening for</legend>
+            <ol class="real test-panel"></ol>
+        </fieldset>
+        <div id="real" class="container foobars">
+            <!-- <canvas width="400" height="400"></canvas> -->
+            <img style="position:absolute" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg/687px-Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg" />
+        </div>
+        <div class="resizer"></div>
+        &nbsp;
+    </div>
+
+    <div class="block">
+        <h1>foobars with virtual content</h1>
+        <fieldset>
+            <legend>Listening for</legend>
+            <ol class="virtual test-panel"></ol>
+        </fieldset>
+        <div id="virtual" class="container">
+            <!-- <canvas width="400" height="400"></canvas> -->
+            <div class="content"></div>
+            <div class="content"></div>
+        </div>
+        &nbsp;
+    </div>
+
+    <div class="block" style="vertical-align: bottom">
+        <h1>system scrollbars</h1>
+        <div class="container scrollable">
+            <!-- <canvas width="400" height="400"></canvas> -->
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg/687px-Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg" />
+        </div>
+        &nbsp;
+    </div>
+
+</body>
+</html>

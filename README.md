@@ -1,6 +1,8 @@
 # FooBars
 Styleable scrollbars
 
+Try the [https://openfin.github.io/list-dragon/demo.html](demo).
+
 \[See the note [Regarding submodules](https://github.com/openfin/rectangular#regarding-submodules) for important information on cloning this repo or re-purposing its build template.\]
 
 ## API documentation
@@ -92,4 +94,4 @@ This is a modified Node module; its contents are inside a closure. Although this
 </script>
 ```
 
-Alternatively, you can use nodeify.js which does something similar but allows your modules to reference each other with a provided `require()` function. This is a lightweight alternative to using browserify (although there is not file concatenation involved).
+Alternatively, you can use [mnm.js (bower component)](https://github.com/joneit/mnm) which does something similar but allows your modules to reference each other with a provided `require()` function. This is a lightweight alternative to using browserify (although there is not file concatenation involved).
