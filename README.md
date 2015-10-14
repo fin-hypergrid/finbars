@@ -1,7 +1,7 @@
 # FooBars
 Styleable scrollbars
 
-Try the [demo](https://openfin.github.io/list-dragon/demo.html).
+Try the [demo](https://openfin.github.io/foobars/demo.html).
 
 \[See the note [Regarding submodules](https://github.com/openfin/rectangular#regarding-submodules) for important information on cloning this repo or re-purposing its build template.\]
 
