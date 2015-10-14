@@ -1,4 +1,5 @@
 org="openfin"
+module="foobars"
 
 # set variable repo to current directory name (without path)
 repo=${PWD##*/}
@@ -24,11 +25,14 @@ git rm -rf -q .
 # copy the doc directory from the workspace
 cp -R ../../$repo/doc/* . >/dev/null
 
-# copy index.js from repo/. to the cdn directory as list-dragon.js
-cp ../../$repo/index.js ./list-dragon.js >/dev/null
+# copy index.js from repo/. to the cdn directory as $module.js
+cp ../../$repo/index.js ./$module.js >/dev/null
 
 # make a minified version
-uglify -s list-dragon.js -o list-dragon.min.js
+uglify -s $module.js -o $module.min.js
+
+# copy the demo
+cp ../../$repo/demo.html . >>/dev/null
 
 # send it up
 git add . >/dev/null
