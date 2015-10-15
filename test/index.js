@@ -14,15 +14,22 @@ global.Element.prototype = {
     classList: {
         add: nullfunc
     },
+    style: {},
     appendChild: nullfunc,
-    style: {}
+    insertBefore: nullfunc
 };
 global.document = {
     createElement: function() {
         return new Element();
     },
+    createTextNode: function() {
+        return undefined;
+    },
     getElementById: function() {
         return null;
+    },
+    getElementsByTagName: function() {
+        return [new Element];
     }
 };
 

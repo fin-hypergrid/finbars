@@ -72,11 +72,15 @@
  *
  * @property {Element} [container=bar.parentElement] - The content area element (the element that contains the content that appears to scroll).
  *
+ * @param {Element} [cssStylesheetReferenceElement] - If omitted, the stylesheet will be inserted as first child of `<head>...</head>` element. If `null` will be inserted as last child of `<head>...</head>` element. If defined, will be inserted before the given reference element. In all cases, will not be inserted if already found in dom.
+ *
  * @property {foobarStyles} [barStyles] - (See type definition for details.) Scrollbar styles to be applied upon calls to {@link FooBar#resize|resize()}. Note that before applying these new values, all the scrollbar's style values are reset, exposing inherited values. Only specify a `barStyles` object when you need to override stylesheet values.
  *
  * @property {string|null} [deltaProp='deltaY'] - The name of the wheel event object property containing the relevant wheel delta data. Useful values are `'deltaX'`, `'deltaY'`, or `'deltaZ'`.
  *
  * NOTE: The default value shown, `'deltaY'`, is for vertical scrollbars; the default for horizontal scrollbars is actually `'deltaX'`.
+ *
+ * For example, because the mouse wheel only emits events with `deltaY` data, if you want the mouse wheel to cause horizontal scrolling, give `{ deltaProp: 'deltaY' }` in your horizontal scrollbar instantiation.
  *
  * This option is provided so that you can override the default primarily to accommodate certain "panoramic" interface designs where the mouse wheel should control horizontal rather than vertical scrolling.
  *
@@ -90,16 +94,11 @@
  * For example, `foobar-vertical` and `foobar-horizontal`.
  *
  * There should be defined CSS selectors using these names, as per the example in `src/css/foobars.css`.
- *
- * For example, because the mouse wheel only emits events with `deltaY` data, if you want the mouse wheel to cause horizontal scrolling, give `{ deltaProp: 'deltaY' }` in your horizontal scrollbar instantiation.
  */
 
 (function (module) {  // eslint-disable-line no-unused-expressions
 
     // This closure supports NodeJS-less client side includes with <script> tags. See https://github.com/joneit/mnm.
-
-    /* inject:css */
-    /* endinject */
 
     /**
      * @constructor FooBar
@@ -220,6 +219,8 @@
         if (this.paging) {
             this.bar.onclick = this._bound.onclick;
         }
+
+        cssInjector(this.cssStylesheetReferenceElement);
     }
 
     FooBar.prototype = {
@@ -300,14 +301,15 @@
          * @memberOf FooBar.prototype
          */
         resize: function (increment, barStyles) {
-            if (!this.bar.parentElement) {
+            var bar = this.bar,
+                container = this.container || bar.parentElement;
+
+            if (!container) {
                 throw 'FooBar.resize() called before DOM insertion.';
             }
 
-            var bar = this.bar,
-                barRect = bar.getBoundingClientRect(),
-                container = this.container || bar.parentElement,
-                containerRect = container.getBoundingClientRect();
+            var containerRect = container.getBoundingClientRect(),
+                barRect = bar.getBoundingClientRect();
 
             // promote 2nd param if 1st omitted
             if (typeof increment === 'object') {
@@ -621,6 +623,40 @@
         right:  'horizontal',
         width:  'horizontal'
     };
+
+    /**
+     * @summary Insert base stylesheet into DOM
+     * @private
+     * @param {Element} [referenceElement]
+     * if `undefined` (or omitted) or `null`, injects stylesheet at top or bottom of <head>, respectively, but only once;
+     * otherwise, injects stylesheet immediately before given element
+     */
+    function cssInjector(referenceElement) {
+        var container, style, ID = 'foobars-base-styles';
+
+        if (!cssInjector.text || document.getElementById(ID)) {
+            return;
+        }
+
+        style = document.createElement('style');
+        style.type = 'text/css';
+        style.id = ID;
+        if (style.styleSheet) {
+            style.styleSheet.cssText = cssInjector.text;
+        } else {
+            style.appendChild(document.createTextNode(cssInjector.text));
+        }
+
+        container = referenceElement && referenceElement.parentNode || document.head || document.getElementsByTagName('head')[0];
+
+        if (referenceElement === undefined) {
+            referenceElement = container.firstChild;
+        }
+
+        container.insertBefore(style, referenceElement);
+    }
+    /* inject:css */
+    /* endinject */
 
     // Interface
     module.exports = FooBar;
