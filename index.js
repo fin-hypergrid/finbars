@@ -72,23 +72,30 @@
         }
         this.bar = bar;
 
-        var key;
-
         options = options || {};
 
         // presets
         this.orientation = 'vertical';
+        this._min = this._index = 0;
+        this._max = 100;
 
         // options
-        for (key in options) {
+        for (var key in options) {
             if (options.hasOwnProperty(key)) {
+                var option = options[key];
                 switch (key) {
                 case 'cssStylesheetReferenceElement':
-                    cssInjector(options[key]);
+                    cssInjector(option);
                     break;
 
                 case 'index':
-                    this._index = options[key];
+                    this._index = option;
+                    break;
+
+                case 'range':
+                    validRange(option);
+                    this._min = option.min;
+                    this._max = option.max;
                     break;
 
                 default:
@@ -98,16 +105,11 @@
                     ) {
                         // override prototype defaults for standard ;
                         // extend with additional properties (for use in onchange event handlers)
-                        this[key] = options[key];
+                        this[key] = option;
                     }
                     break;
                 }
             }
-        }
-
-        // postsets
-        if (!('index' in options)) {
-            this._index = this.min;
         }
     }
 
@@ -167,7 +169,7 @@
 
             this.bar.className = this.bar.className.replace(/(vertical|horizontal)/g, orientation);
 
-            if (this.bar.style.cssText) {
+            if (this.bar.style.cssText || this.thumb.style.cssText) {
                 this.bar.removeAttribute('style');
                 this.thumb.removeAttribute('style');
                 this.resize();
@@ -263,57 +265,55 @@
         paging: true,
 
         /**
-         * @readonly
-         * @name min
-         * @summary The minimum scroll value.
-         * @desc This value is defined by the constructor. This is the lowest value acceptable to `this.index` (the setter) and returnable by `this.index` (the getter).
+         * @name range
+         * @summary Setter for the minimum and maximum scroll values.
+         * @desc Set by the constructor. These values are the limits for {@link FooBar#index|index}.
          *
-         * As implemented, this value should not be modified after instantiation. This could be remedied by making a setter that calls _calcThumb to reposition the thumb.
-         * @type {number}
+         * The setter accepts an object with exactly two numeric properties: `.min` which must be less than `.max`. The values are extracted and the object is discarded.
+         *
+         * The getter returns a new object with `.min` and '.max`.
+         *
+         * @type {rangeType}
          * @memberOf FinBar.prototype
          */
-        min: 0,
-
-        /**
-         * @readonly
-         * @name max
-         * @summary The maximum scroll value.
-         * @desc This value is defined by the constructor. This is the highest value acceptable to `this.index` (the setter) and returnable by `this.index` (the getter).
-         *
-         * As implemented, this value should not be modified after instantiation. This could be remedied by making a setter that calls _calcThumb to reposition the thumb.
-         * @type {number}
-         * @memberOf FinBar.prototype
-         */
-        max: 100,
+        set range(range) {
+            validRange(range);
+            this._min = range.min;
+            this._max = range.max;
+            this.index = this.index; // re-clamp
+        },
+        get range() {
+            return {
+                min: this._min,
+                max: this._max
+            };
+        },
 
         /**
          * @summary Index value of the scrollbar.
-         * @desc This is the position of the scroll thumb. Setting this value clamps it to {@link FinBar#min|min}..{@link FinBar#max|max} and calls {@link FinBar#_setScroll|_setScroll()} to scroll the content and move thumb.
+         * @desc This is the position of the scroll thumb.
+         *
+         * Setting this value clamps it to {@link FinBar#min|min}..{@link FinBar#max|max}, scroll the content, and moves thumb.
+         *
+         * Getting this value returns the current index. The returned value will be in the range `min`..`max`. It is intentionally not rounded.
+         *
+         * Use this value as an alternative to (or in addition to) using the {@link FinBar#onchange|onchange} callback function.
          *
          * @see {@link FinBar#_setScroll|_setScroll}
          * @type {number}
          * @memberOf FinBar.prototype
          */
         set index(idx) {
-            idx = Math.min(this.max, Math.max(this.min, idx)); // clamp it
+            idx = Math.min(this._max, Math.max(this._min, idx)); // clamp it
             this._setScroll(idx);
             this._calcThumb();
         },
-
-        /**
-         * @summary The current index value of the scrollbar.
-         * @desc This _getter_ calculates the current index from the thumb position. The returned value will be in the range `min`..`max`. It is intentionally not rounded.
-         *
-         * Use this the getter value as an alternative to (or in addition to) using the {@link FinBar#onchange|onchange} callback function.
-         * @readonly
-         * @type {number}
-         * @memberOf FinBar.prototype
-         */
         get index() {
             return this._index;
         },
 
         /**
+         * @private
          * @summary Move the thumb.
          * @desc Also displays the index value in the test panel and invokes the callback.
          * @param idx - The new scroll index, a value in the range `min`..`max`.
@@ -335,7 +335,7 @@
 
             // Move the thumb
             if (scaled === undefined) {
-                scaled = (idx - this.min) / (this.max - this.min) * this._thumbMax;
+                scaled = (idx - this._min) / (this._max - this._min) * this._thumbMax;
             }
             this.thumb.style[this.oh.leading] = scaled + 'px';
         },
@@ -344,7 +344,7 @@
             var containerRect = this.content.parentElement.getBoundingClientRect(),
                 sizeProp = this.oh.size,
                 maxScroll = Math.max(0, this.content[sizeProp] - containerRect[sizeProp]),
-                scroll = (idx - this.min) / (this.max - this.min) * maxScroll;
+                scroll = (idx - this._min) / (this._max - this._min) * maxScroll;
 
             this.content.style[this.oh.leading] = -scroll + 'px';
         },
@@ -376,8 +376,8 @@
             var bar = this.bar,
                 container = this.container || bar.parentElement;
 
-            if (!container) {
-                error('resize() called before DOM insertion.');
+            if (!bar.parentNode) {
+                return; // not in DOM yet so nothing to do
             }
 
             var containerRect = container.getBoundingClientRect(),
@@ -392,11 +392,11 @@
             // Bound to real content: Content was given but no onchange handler.
             // Set up .onchange, .increment, .min, and .max.
             // Note this only makes sense if your index unit is pixels.
-            if (!this.onchange && this.content) {
+            if (this.content && !this.onchange && this.onchange !== this.scrollRealContent) {
                 this.onchange = this.scrollRealContent;
                 increment = containerRect[this.oh.size];
-                this.min = 1;
-                this.max = this.content[this.oh.size] - increment;
+                this._min = this._index = 0;
+                this._max = this.content[this.oh.size] - increment - 1;
             }
 
             increment = this.increment = increment || this.increment;
@@ -508,7 +508,7 @@
             var barSize = barBox[prop.size];
 
             // adjust size of thumb to `increment` as fraction of index range
-            var range = this.max - this.min + this.increment; // adding in `increment` puts last item on bottom of last page rather than top
+            var range = this._max - this._min + this.increment; // adding in `increment` puts last item on bottom of last page rather than top
             var normalizedThumbSize = this.increment / range;
             var thumbSize = Math.max(20, Math.round(normalizedThumbSize * barSize));
             this.thumb.style[prop.size] = thumbSize + 'px';
@@ -542,6 +542,18 @@
             window.removeEventListener(evtName, this._bound['on' + evtName]);
         }
     };
+
+    function validRange(range) {
+        var keys = Object.keys(range),
+            valid =  keys.length === 2 &&
+                typeof range.min === 'number' &&
+                typeof range.max === 'number' &&
+                range.min < range.max;
+
+        if (!valid) {
+            error('Invalid .range object.');
+        }
+    }
 
     /**
      * @private
@@ -603,7 +615,7 @@
 
         onmousemove: function (evt) {
             var scaled = Math.min(this._thumbMax, Math.max(0, evt[this.oh.axis] - this.pinOffset));
-            var idx = scaled / this._thumbMax * (this.max - this.min) + this.min;
+            var idx = scaled / this._thumbMax * (this._max - this._min) + this._min;
 
             this._setScroll(idx, scaled);
 
@@ -721,16 +733,16 @@
     /* endinject */
 
     function error(msg) {
-        return 'finbars: ' + msg;
+        throw 'finbars: ' + msg;
     }
 
     // Interface
     module.exports = FinBar;
 })(
-    typeof window === 'undefined' ? module : window.module || (window.FinBar = {}),
-    typeof window === 'undefined' ? module.exports : window.module && window.module.exports || (window.FinBar.exports = {})
+    typeof module === 'object' && module || (window.FinBar = {}),
+    typeof module === 'object' && module.exports || (window.FinBar.exports = {})
 ) || (
-    typeof window === 'undefined' || window.module || (window.FinBar = window.FinBar.exports)
+    typeof module === 'object' || (window.FinBar = window.FinBar.exports)
 );
 
 /* About the above IIFE:

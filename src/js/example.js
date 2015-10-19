@@ -35,24 +35,22 @@
 
     exports.InitFinbarsWithVirtualContent = function (container, contents) {
         var horzBar = new FinBar({
-            min: 1001,
-            max: 99999,
+            onchange: renderVirtualContent,
+            range: { min: 1001, max: 99999 },
             increment: 8,
             orientation: 'horizontal',
             classPrefix: 'virtual',
             barStyles: barStyles,
-            onchange: renderVirtualContent,
             content: contents[0]
         });
 
         var vertBar = new FinBar({
-            min: 1001,
-            max: 99999,
+            onchange: renderVirtualContent,
+            range: { min: 1001, max: 99999 },
             increment: 8,
             orientation: 'vertical',
             classPrefix: 'virtual',
             barStyles: barStyles,
-            onchange: renderVirtualContent,
             content: contents[1]
         });
 
@@ -64,7 +62,7 @@
 
         function renderVirtualContent(idx) {
             var s = '';
-            idx = Math.min(idx, this.max - 7);
+            idx = Math.min(idx, this.range.max - 7);
             for (var limit = idx + 10; idx < limit; ++idx) {
                 s += idx + '<br>';
             }

@@ -17,7 +17,17 @@ global.Element.prototype = {
     className: '',
     style: {},
     appendChild: nullfunc,
-    insertBefore: nullfunc
+    insertBefore: nullfunc,
+    getBoundingClientRect: function () {
+        return {
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            width: 10,
+            height: 10
+        }
+    }
 };
 global.document = {
     createElement: function() {
@@ -31,6 +41,14 @@ global.document = {
     },
     getElementsByTagName: function() {
         return [new Element];
+    }
+};
+global.window.getComputedStyle = function () {
+    return {
+        marginTop: 0,
+        marginBottom: 0,
+        marginLeft: 0,
+        marginRight: 0,
     }
 };
 
@@ -53,7 +71,7 @@ describe('require() returns an object that', function() {
         it('has a member `min`', function() {
             finbar.min.should.equal(options.min);
         });
-        it('has a member `max` === 2nd constructor param', function() {
+        it('has a member `max`', function() {
             finbar.max.should.equal(options.max);
         });
         it('has a member `bar` of type Element', function() {

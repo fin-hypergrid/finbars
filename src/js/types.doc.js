@@ -70,13 +70,21 @@
  * @param {number} index - The scrollbar index, always a value in the range {@link FinBar#min|min}..{@link FinBar#max|max}. (Same as `this.index`.)
  */
 
+/** @typedef {object} rangeType
+ *
+ * @summary A min/max range.
+ *
+ * @property {number} min
+ * @property {number} max
+ */
+
 /** @typedef {object} finbarOptions
  *
  * @desc As an "options" object, all properties herein are optional. Omitted properties take on the default values shown; if no default value is shown, the option (and its functionality) are undefined. All options, including any miscellaneous ("custom") options, become properties of `this`, the instantiated FinBar object. As such, they are all available to the {@link finbarOnChange|onchange} callback function, which is called with `this` as its context.
  *
  * @property {number} [orientation='vertical'] - Overrides the prototype default. See {@link FinBar#orientation|orientation} for details.
  *
- * @property {number} [min=0] - Overrides the prototype default. See {@link FinBar#min|min} for details.
+ * @property {rangeType} [range={min:0,max:100}] - See {@link FinBar#range|range} for details.
  *
  * @property {number} [max=100] - Overrides the prototype default. See {@link FinBar#max|max} for details.
  *
@@ -112,11 +120,11 @@
  *
  *   Should you wish to use some other configuration of elements, you must indicate which element is the container the scrollbar is controlling. For example, if you wish to position your scrollbar outside the content area rather than within it.
  *
- * @property {Element} [content] - This option is used to bind the scroll bar to some real content for the purpose of scrolling. Giving this option while omitting the `onchange` option signals the constructor to make this binding for you. When the API sees this configuration, it makes the following settings for you:
- *   * `this.min` = 1
- *   * `this.max` = the content size - the container size
+ * @property {Element} [content] - This option is used to bind the scroll bar to some real content for the purpose of scrolling. Giving this option while omitting the `onchange` option signals the constructor to make this binding for you. When the API sees this configuration, it makes the following settings for you (so don't try to set any of these yourself):
+ *   * `this.min` = 0
+ *   * `this.max` = the content size - the container size - 1
  *   * `this.increment` = the container size
  *   * `this.onchange` = `this.scrollRealContent`
  *
- * It is not normally used for any other purpose. However, as with non-standard options, it will be mixed in to the object for future reference, such as in an onchange event handler. Therefore, if you do give a value for this option while also giving a value for the `onchange` option, it will be not be used by the constructor but will be available to your handler.
+ * This property is not normally used for any other purpose. However, as with non-standard options, it will be mixed in to the object for future reference, such as in an onchange event handler. Therefore, if you do give a value for this option while also giving a value for the `onchange` option, it will be not be used by the constructor but will be available to your handler.
  */
