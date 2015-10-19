@@ -9,6 +9,33 @@ Try the [demo](https://openfin.github.io/foobars/demo.html).
 
 Detailed API docs can be found [here](http://openfin.github.io/foobars/FooBar.html).
 
+## Synopsis
+
+The following sets up a vertical scrollbar to scroll "real" content with the default handler, `vertbar.scrollRealContent`, which is wired up for you automatically when you give `content` option but no `onchange` option).
+```javascript
+var FooBar = require('foobars');
+
+var container = document.getElementsByTagName('div')[0],
+    content = container.firstChild,
+    vertBar = new FooBar({ orientation: 'vertical', content: content });
+
+container.appendChild(vertBar.bar);
+
+vertbar.resize();
+
+window.onresize = function() { vertbar.resize(); };
+
+```
+Mark up:
+```html
+<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden;">
+    <img src="something-taller-than-document.png" />
+</div>
+```
+For this example, we use CSS to dynamically stick the `container` size to the document so that it is resized as the window is resized.
+
+To set up a horizontal scrollbar as well, just do everything twice.
+
 ## Introduction
 
 What you do with these scrollbars is completely up to you. They are essentially "range" controls. The scrolling effect is implemented purely in the callback (which you supply). Therefore, they can be used for any purpose, such as to perform "virtual scrolling" (see below).
@@ -75,22 +102,28 @@ An HTML file is included as an example. I user-tested this example file on:
 This is a modified Node module; its contents are inside a closure. Although this is an extra and unnecessary closure from Node's point of view, setting up the file this way also allows it to be included directly from the client HTML with a `<script>` tag, as follows:
 
 ```html
-<script>
-    var module = { exports: {} };
-</script>
-
 <script src="js/foobars.js"></script>
+```
 
-<script>
-    var FooBar = module.exports;
-    module.exports = {};
-</script>
+This will create a single top-level object `FooBar`, the constructor.
 
-<script src="js/another-such-file.js"></script>
+Alternatively, [mnm.js (bower component)](https://github.com/joneit/mnm) allows your modules to reference each other with a provided `require()` function. This is a lightweight alternative to using browserify (although there is not file concatenation involved). The setup might look something like this:
 
-<script>
-    var AnotherSuchFile = module.exports;
-    delete window.module;
+```html
+<script src="bower_components/mnm/src/js/mnm.js"></script>
+
+<script src="src/foobars.js"></script>
+<script> module.cache('foobars'); </script>
+```
+
+and used as follows:
+
+```javascript
+window.onload = function () {
+    var FooBar = require('foobars');
+    var scrollbar = new FooBar({ ... });
+    // etc.
+}):
 </script>
 ```
 

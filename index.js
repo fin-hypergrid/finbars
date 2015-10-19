@@ -15,12 +15,14 @@
  *
  * @desc Only enough of the above style properties need to be specified sufficient to place the scrollbar in its container. Specifically:
  *
- * * For horizontal scrollbars, some combination of `left` + either `width` or `right`.
- * * For vertical scrollbars, some combination of `top` + either `height` or `bottom`.
+ * * For horizontal scrollbars, some combination of `left` and either `width` or `right`.
+ * * For vertical scrollbars, some combination of `top` and either `height` or `bottom`.
  *
- * Values for some or all of these may come from your stylesheets, in which case they may be omitted here. You are advised to keep in mind that CSS always measures values for `right` and `bottom` _backwards_ from their respective container edges. (That is, positive values measure towards the left and top, respectively.)
+ * Values for some or all of these may come from your stylesheets, in which case they may be omitted here.
  *
- * Style property names found in the generalized style dictionary are translated for you to those found above (as a function of scrollbar orientation).
+ * > Remember: CSS always measures values for `right` and `bottom` _backwards_ from their respective container edges. That is, positive values measure towards the left and top, respectively.
+ *
+ * If you give the style pseudo-property `leading`, `trailing`, and `size` these will be translated for you to `left` or `top`, `right` or `bottom`, and `width` or `height` based on your scrollbar's orientation.
  *
  * Regarding style values, the following to transformations are performed for your convenience:
  *
@@ -28,11 +30,30 @@
  * 2. If style value is a percentage _and_ has margins, it is converted to the pixel percentage of the scrollbar's parent element, minus its margins, with "px" appended.
  */
 
+/**
+ * @typedef {object} orientationHashType
+ * @desc In the following, two defaults are shown for each property, for the vertical and horizontal orientation hashes, respectively.
+ *
+ * The description for each refers to the property relevant to the scrollbar's orientation.
+ * @property {string} coordinate='clientY'|'clientX' - The name of the `MouseEvent` property that holds the relevant viewport coordinate.
+ * @property {string} axis='pageY'|'pageX' - The name of the `MouseEvent` property that holds the relevant document coordinate.
+ * @property {string} size='height'|'width' - The name of the scrollbar's `style` object property that holds the extent (size) of the scrollbar.
+ * @property {string} outside='right'|'bottom' - The name of the scrollbar's `style` object property that refers to the edge of the scrollbar, typically anchored (by being set to 0) to that same edge inside the containing element.
+ * @property {string} inside='left'|'top' - The name of the scrollbar's `style` object property that refers to the edge of the scrollbar that is not typically anchored to the containing element.
+ * @property {string} leading='top'|'left' - The name of the scrollbar's `style` object property that refers to the low-order end (edge) of the scrollbar, typically anchored (by being set to 0) to that same edge inside the containing element.
+ * @property {string} trailing='bottom'|'right' - The name of the scrollbar's `style` object property that refers to the high-order end (edge) of the scrollbar, typically anchored (by being set to 0) to that same edge inside the containing element.
+ * @property {string} marginLeading='marginTop'|'marginLeft' - The name of the scrollbar's `style` object property that refers to the margin adjacent to the low-order end (edge) of the scrollbar, creating space between the end of the scrollbar and the edge of the content.
+ * @property {string} marginTrailing='marginBottom'|'marginRight' - The name of the scrollbar's `style` object property that refers to the margin adjacent to the high-order end (edge) of the scrollbar, creating space between the end of the scrollbar and the edge of the content.
+ * @property {string} thickness='width'|'height' - The name of the scrollbar's `style` object property that refers to the broadness of the scrollbar.
+ * @property {string} delta='deltaY'|'deltaX' - The name of the `WheelEvent` property that holds the relevant delta value for the wheel movement.
+ */
+
 /** @typedef {function} foobarOnChange
  *
  * @summary A callback function to be invoked whenever the scroll index changes.
  *
- * @desc You specify a callback function in the `onchange` property of the `options` object parameter to the {@link FooBar|FooBar constructor}.
+ * @desc * Specify a callback function in the `onchange` property of the `options` object parameter to the {@link FooBar|FooBar constructor}.
+ * * Set or change the `onchange` property of your `FooBar` object directly.
  *
  * The function you supply is invoked to handle the following events:
  *
@@ -40,14 +61,13 @@
  * * Invoked once by calling the {@link FooBar#resize|resize()} method
  * * Invoked repeatedly as user drags the scrollbar thumb
  * * Invoked repeatedly as user spins the mouse wheel (but only when mouse pointer is positioned inside the {@link FooBar#container|container} element)
- * * Invoked once when user clicks mouse in the page-up region (in the scrollbar above the thumb)
- * * Invoked once when user clicks mouse in the page-down region (in the scrollbar below the thumb)
+ * * _If `.paging`:_ Invoked once when user clicks mouse in the _page-up region_ (the area of the scrollbar above the thumb)
+ * * _If `.paging`:_ Invoked once when user clicks mouse in the _page-down region_ (the area of the scrollbar below the thumb)
  *
  * The handler's calling context is the {@link FooBar} object. Note that this includes:
  *
  *  * All the documented properties for the `FooBar` object
- *  * All the standard `options` properties, which were either copied from your `options` object or set to a default value when missing therefrom
- *  * Any miscellaneous "custom" properties you may have included in the `options` object
+ *  * Any additional "custom" properties you may have included in the `options` object
  *
  * And of course your handler will have access to all other objects in it's definition scope.
  *
@@ -58,42 +78,39 @@
  *
  * @desc As an "options" object, all properties herein are optional. Omitted properties take on the default values shown; if no default value is shown, the option (and its functionality) are undefined. All options, including any miscellaneous ("custom") options, become properties of `this`, the instantiated FooBar object. As such, they are all available to the {@link foobarOnChange|onchange} callback function, which is called with `this` as its context.
  *
- * @property {number} [orientation='vertical'] - Flavor of scrollbar to create. Useful values are `'vertical'` (the default) or `'horizontal'`.
+ * @property {number} [orientation='vertical'] - Overrides the prototype default. See {@link FooBar#orientation|orientation} for details.
  *
- * @property {foobarOnChange|Element} [onchange] - Callback function for scrolling. (See type definition for details and calling signature).
+ * @property {number} [min=0] - Overrides the prototype default. See {@link FooBar#min|min} for details.
  *
- * After instantiation, `this.onchange` can be updated directly.
+ * @property {number} [max=100] - Overrides the prototype default. See {@link FooBar#max|max} for details.
  *
- * @property {number} [increment=1] - Number of index units per pageful. Used for page-up and page-down; and also to size the thumb (which however has an absolute minimum size of 20 pixels).
+ * @property {number} [index=min] - Overrides the prototype default. See {@link FooBar#index|index} for details. This sets the initial position of the thumb after instantiation.
  *
- * @property {boolean} [paging=true] - Listen for clicks in page-up and page-down regions of scrollbar.
+ * @property {foobarOnChange} [onchange] - Overrides the prototype default. See {@link FooBar#onchange|onchange} for details.
  *
- * The string 'auto' uses the current pixel size of the content area (the dimension reflecting your scrollbar's orientation). Note however that this only makes sense when your index unit is pixels.
+ * @property {number} [increment=1] - Overrides the prototype default. See {@link FooBar#increment|increment} for details.
  *
- * @property {Element} [container=bar.parentElement] - The content area element (the element that contains the content that appears to scroll).
+ * @property {boolean} [paging=true] - Overrides the prototype default. See {@link FooBar#paging|paging} for details.
  *
- * @param {Element} [cssStylesheetReferenceElement] - If omitted, the stylesheet will be inserted as first child of `<head>...</head>` element. If `null` will be inserted as last child of `<head>...</head>` element. If defined, will be inserted before the given reference element. In all cases, will not be inserted if already found in dom.
+ * @property {foobarStyles} [barStyles] - Overrides the prototype default. See {@link FooBar#barStyles|barStyles} for details.
  *
- * @property {foobarStyles} [barStyles] - (See type definition for details.) Scrollbar styles to be applied upon calls to {@link FooBar#resize|resize()}. Note that before applying these new values, all the scrollbar's style values are reset, exposing inherited values. Only specify a `barStyles` object when you need to override stylesheet values.
+ * @property {string|null} [deltaProp='deltaY'|'deltaX'] - Overrides the prototype default. See {@link FooBar#deltaProp|deltaProp} for details.
  *
- * @property {string|null} [deltaProp='deltaY'] - The name of the wheel event object property containing the relevant wheel delta data. Useful values are `'deltaX'`, `'deltaY'`, or `'deltaZ'`.
+ * > NOTE: The default values shown are for vertical and horizontal scrollbars, respectively.
  *
- * NOTE: The default value shown, `'deltaY'`, is for vertical scrollbars; the default for horizontal scrollbars is actually `'deltaX'`.
+ * @property {string} [classPrefix='foobar'] - Overrides the prototype default. See {@link FooBar#classPrefix|classPrefix} for details.
  *
- * For example, because the mouse wheel only emits events with `deltaY` data, if you want the mouse wheel to cause horizontal scrolling, give `{ deltaProp: 'deltaY' }` in your horizontal scrollbar instantiation.
+ * @param {Element|string|null} [cssStylesheetReferenceElement] - Determines where to insert the stylesheet:
+ * * `undefined` (or omitted) - inserted as first child of th e`<head>...</head>` element
+ * * `null` - inserted as last child of `<head>...</head>` element
+ * * If a string, inserted before first element that matches a document query using the string as a selector. (If no matching element, see `undefined` above.)
+ * * If an instance of `Element`, will be inserted before that element reference element.
  *
- * This option is provided so that you can override the default primarily to accommodate certain "panoramic" interface designs where the mouse wheel should control horizontal rather than vertical scrolling.
+ * In all cases, the built-in stylesheet will not be inserted again if already found in DOM.
  *
- * If you specify `null`, mouse wheel events will be ignored.
+ * @property {Element} [container=bar.parentElement] - The element representing the content area. You only need to include this under special circumstances. Usually the container elements contains both the content element that scrolls within it as well as the scrollbar element, which are siblings. This option is provided for when this is _not_ the case. For example, if you wish to position your scrollbar outside the content area rather than within it. Omitting this options assumes the container to be the scrollbar's parent element.
  *
- * @property {string} [classPrefix='foobar'] - A string used to form the name of the CSS class referenced by the new scrollbar element. The class name will be the concatenation of:
- * 1. This string
- * 2. A hyphen character
- * 3. The value of the `orientation` option
- *
- * For example, `foobar-vertical` and `foobar-horizontal`.
- *
- * There should be defined CSS selectors using these names, as per the example in `src/css/foobars.css`.
+ * @property {Element} [content] - This option is only to be used in the specific case where you want to bind the scroll bar to some real content for the purpose of scrolling using the built in `scrollRealContent` handler. Giving this option while omitting the `onchange` option signals the constructor to make this binding for you. It is normally used for any other purpose. However, as with non-standard options, it will be mixed in to the object for future reference, such as in an onchange event handler. Therefore, if you do give a value for this option while also giving a value for the `onchange` option, it will be not be used by the constructor but will be available to your handler.
  */
 
 (function (module) {  // eslint-disable-line no-unused-expressions
@@ -107,78 +124,66 @@
      *
      * 1. Instantiate the scrollbar object by calling this constructor function. Upon instantiation, the DOM element for the scrollbar (with a single child element for the scrollbar "thumb") is created but is not insert it into the DOM.
      * 2. After instantiation, it is the caller's responsibility to insert the scrollbar, {@link FooBar#bar|this.bar}, into the DOM.
-     * 3. After insertion, the caller must call {@link FooBar#resize|resize()} to size and position the scrollbar and its thumb.
+     * 3. After insertion, the caller must call {@link FooBar#resize|resize()} at least once to size and position the scrollbar and its thumb. After that, `resize()` should also be called repeatedly on resize events (as the content element is being resized).
      *
      * Suggested configurations:
-     * * **Unbound** &mdash; the scrollbar serves merely as a simple range (slider) control. Omit both `options.onchange` and `options.content`.
-     * * **Bound to a content element using a custom event handler** supplied by the programmer in `options.onchange` typically to handle scrolling. `options.content` will be available to the handler (as `this.content`). Custom event handlers are not limited to implementing scrolling. They could control anything, _e.g.,_ data transformations, graphics transformations, _etc._ See {@link foobarOnChange} for more details.
-     * * **Bound to a content element using the built-in event handler** for smooth scrolling of "real" content. Omit `options.onchange` and supply your content element in `options.content`. When the API sees this configuration, it makes the following settings for you:
+     * * _**Unbound**_<br/>
+     * The scrollbar serves merely as a simple range (slider) control. Omit both `options.onchange` and `options.content`.
+     * * _**Bound to virtual content element**_<br/>
+     * Virtual content is projected into the element using a custom event handler supplied by the programmer in `options.onchange`. A typical use case would be to handle scrolling of the virtual content. Other use cases include data transformations, graphics transformations, _etc._ You can set arbitrary scrollbar properties through the constructor's options object for easy access by your handler. For example, passing the content element in `options.content` will make it available to the handler (as `this.content`). See {@link foobarOnChange} for more details.
+     * * _**Bound to real content**_<br/>
+     * Set `options.content` to the "real" content element but omit `options.onchange`. This will cause the scrollbar to use the built-in event handler (`this.scrollRealContent`) which implements smooth scrolling of the content element within the container.  When the API sees this configuration, it makes the following settings for you:
      *   * `this.min` = 1
      *   * `this.max` = the content size - the container size
      *   * `this.increment` = the container size
-     *   * `this.onchange` = the built-in `this.scrollRealContent` handler
+     *   * `this.onchange` = `this.scrollRealContent`
      *
      * @param {foobarOptions} [options={}] - Options object. See the type definition for member details.
      */
     function FooBar(options) {
 
+        var key;
+
         options = options || {};
 
-        this.orientation = options.orientation || 'vertical';
-        this.prop        = generalizedStyleDictionaries[this.orientation];
-        this.onchange    = options.onchange    || null;
-        this.classPrefix = options.classPrefix || 'foobar';
-        this.deltaProp   = options.deltaProp === null ? null : (options.deltaProp || this.prop.delta);
-        this.increment   = options.increment   || 1;
-        this.barStyles   = options.barStyles   || {};
-        this.paging      = options.paging      || options.paging === undefined;
+        // presets
+        this.orientation = 'vertical';
 
-        /**
-         * @readonly
-         * @name min
-         * @summary The minimum scroll value.
-         * @desc This value is defined by the constructor. This is the lowest value acceptable to `this.index` (the setter) and returnable by `this.index` (the getter).
-         *
-         * As implemented, this value should not be modified after instantiation. This could be remedied by making a setter that calls _calcThumb to reposition the thumb.
-         * @type {number}
-         * @memberOf FooBar
-         */
-        this.min = this._index = options.min || 1;
+        // options
+        for (key in options) {
+            if (options.hasOwnProperty(key)) {
+                switch (key) {
+                case 'cssStylesheetReferenceElement':
+                    cssInjector(options[key]);
+                    break;
 
+                case 'index':
+                    this._index = options[key];
+                    break;
 
-        /**
-         * @readonly
-         * @name max
-         * @summary The maximum scroll value.
-         * @desc This value is defined by the constructor. This is the highest value acceptable to `this.index` (the setter) and returnable by `this.index` (the getter).
-         *
-         * As implemented, this value should not be modified after instantiation. This could be remedied by making a setter that calls _calcThumb to reposition the thumb.
-         * @type {number}
-         * @memberOf FooBar
-         */
-        this.max = options.max || 100;
-
-
-        // check some option values
-        if (!this.prop) {
-            throw 'Invalid value for `options.orientation`.';
-        }
-
-        if (!/^delta[XYZ]$/.test(this.deltaProp)) {
-            throw 'Invalid value for `options.deltaProp`.';
-        }
-
-        // copy any any additional option props for use in onchange event handlers
-        for (var option in options) {
-            if (options.hasOwnProperty(option) && !(option in this)) {
-                this[option] = options[option];
+                default:
+                    if (
+                        key.charAt(0) !== '_' &&
+                        typeof FooBar.prototype[key] !== 'function'
+                    ) {
+                        // override prototype defaults for standard ;
+                        // extend with additional properties (for use in onchange event handlers)
+                        this[key] = options[key];
+                    }
+                    break;
+                }
             }
         }
 
+        // postsets
+        if (!('index' in options)) {
+            this._index = this.min;
+        }
+
         // make bound versions of all the mouse event handler
-        this._bound = {};
-        for (var key in handlersToBeBound) {
-            this._bound[key] = handlersToBeBound[key].bind(this);
+        var bound = this._bound = {};
+        for (key in handlersToBeBound) {
+            bound[key] = handlersToBeBound[key].bind(this);
         }
 
         /**
@@ -188,12 +193,13 @@
          *
          * This property is typically referenced internally only. The size and position of the thumb element is maintained by `_calcThumb()`.
          * @type {Element}
-         * @memberOf FooBar
+         * @memberOf FooBar.prototype
          */
-        this.thumb = document.createElement('div');
-        this.thumb.classList.add('thumb');
-        this.thumb.onclick = this._bound.shortStop;
-        this.thumb.onmouseover = this._bound.onmouseover;
+        var thumb = document.createElement('div');
+        thumb.classList.add('thumb');
+        thumb.onclick = bound.shortStop;
+        thumb.onmouseover = bound.onmouseover;
+        this.thumb = thumb;
 
         /**
          * @name bar
@@ -207,27 +213,171 @@
          *        * The **thumb element**
          *
          * @type {Element}
-         * @memberOf FooBar
+         * @memberOf FooBar.prototype
          */
-        this.bar = document.createElement('div');
-        this.bar.classList.add('foobar-' + this.orientation);
+        var bar = document.createElement('div');
+        bar.classList.add('foobar-' + this._orientation);
         if (this.classPrefix !== 'foobar') {
-            this.bar.classList.add(this.classPrefix + '-' + this.orientation);
+            bar.classList.add(this.classPrefix + '-' + this._orientation);
         }
-        this.bar.classList.add('foobar-' + this.orientation);
-        this.bar.appendChild(this.thumb);
+        bar.classList.add('foobar-' + this._orientation);
+        bar.appendChild(thumb);
         if (this.paging) {
-            this.bar.onclick = this._bound.onclick;
+            bar.onclick = bound.onclick;
         }
-
-        cssInjector(this.cssStylesheetReferenceElement);
+        this.bar = bar;
     }
 
     FooBar.prototype = {
 
         /**
-         * @summary L-value to set a new index value for the scrollbar.
-         * @desc This _setter_ calculates the position of the scroll thumb from the given `idx`, which is clamped to {@link FooBar#min|min}..{@link FooBar#max|max}. It then calls {@link FooBar#_setScroll|_setScroll()} to effect the change.
+         * @readonly
+         * @summary The scrollbar orientation.
+         * @desc Set by the constructor to either `'vertical'` or `'horizontal'`. See the similarly named property in the {@link foobarOptions} object.
+         *
+         * Useful values are `'vertical'` (the default) or `'horizontal'`.
+         *
+         * Setting this property resets `this.oh` and `this.deltaProp`.
+         * @default 'vertical'
+         * @type {string}
+         * @memberOf FooBar.prototype
+         */
+        set orientation(orientation) {
+            this._orientation = orientation;
+
+            /**
+             * @readonly
+             * @name oh
+             * @summary <u>O</u>rientation <u>h</u>ash for this scrollbar.
+             * @desc Set by the `orientation` setter to either the vertical or the horizontal orientation hash. The property should always be synchronized with `orientation`; do not update directly!
+             *
+             * This object is used internally to access scrollbars' DOM element properties in a generalized way without needing to constantly query the scrollbar orientation. For example, instead of explicitly coding `this.bar.top` for a vertical scrollbar and `this.bar.left` for a horizontal scrollbar, simply code `this.bar[this.oh.leading]` instead. See the {@link orientationHashType} definition for details.
+             *
+             * This object is useful externally for coding generalized {@link foobarOnChange} event handler functions that serve both horizontal and vertical scrollbars.
+             * @type {orientationHashType}
+             * @memberOf FooBar.prototype
+             */
+            this.oh = orientations[this._orientation];
+
+            if (!this.oh) {
+                error('Invalid value for `options._orientation.');
+            }
+
+            /**
+             * @name deltaProp
+             * @summary The name of the WheelEvent property this scrollbar should listen to.
+             * @desc Set by the constructor. See the similarly named property in the {@link foobarOptions} object.
+             *
+             * Useful values are `'deltaX'`, `'deltaY'`, or `'deltaZ'`. A value of `null` means to ignore mouse wheel events entirely.
+             *
+             * The mouse wheel is one-dimensional and only emits events with `deltaY` data. This property is provided so that you can override the default of `'deltaX'` with a value of `'deltaY'` on your horizontal scrollbar primarily to accommodate certain "panoramic" interface designs where the mouse wheel should control horizontal rather than vertical scrolling. Just give `{ deltaProp: 'deltaY' }` in your horizontal scrollbar instantiation.
+             *
+             * Caveat: Note that a 2-finger drag on a trackpad emits events with _both_ `deltaX ` and `deltaY` data so you might want to delay making the above adjustment until you have determined that you are getting Y data only with no X data at all (sure bet you on a mouse wheel rather than a trackpad).
+
+             * @type {object|null}
+             * @memberOf FooBar.prototype
+             */
+            this.deltaProp = this.oh.delta;
+        },
+        get orientation() {
+            return this._orientation;
+        },
+
+        /**
+         * @summary Callback for scroll events.
+         * @desc Set by the constructor via the similarly named property in the {@link foobarOptions} object. After instantiation, `this.onchange` may be updated directly.
+         *
+         * This event handler is called whenever the value of the scrollbar is changed through user interaction. The typical use case is when the content is scrolled. It is called with the `FooBar` object as its context and the current value of the scrollbar (its index, rounded) as the only parameter.
+         *
+         * Set this property to `null` to stop emitting such events.
+         * @type {function(number)|null}
+         * @memberOf FooBar.prototype
+         */
+        onchange: null,
+
+        /**
+         * @summary Custom CSS class name for the bar element.
+         * @desc Set by the constructor. See the similarly named property in the {@link foobarOptions} object.
+         *
+         * The constructor always gives each new bar element a CSS class name of `foobar-vertical` (or `foobar-horizontal` depending on orientation).
+         *
+         * If this property is set to something other than `'foobar'`, say for example `'nyan'`, the constructor will add the additional classname `nyan-vertical` (or `nyan-horizontal` as the case may be) to each new bar element.
+         *
+         * NOTE: You only need to make a new class when you want to have two different styles of scrollbars on the same page. If this is not a requirement, then you don't need to make a new class; you would just create some additional rules using the same selectors in the built-in stylesheet, ../css/foobars.css. That is, simply add additional rules `div.foobar-vertical` (or `div.foobar-horizontal`) for the scrollbar and `div.foobar-vertical > div` (or `div.foobar-horizontal > div`) for the "thumb." Just make sure your rules come after the built-ins.
+         * @type {string}
+         * @memberOf FooBar.prototype
+         */
+        classPrefix: 'foobar',
+
+        /**
+         * @name increment
+         * @summary Number of scrollbar index units representing a pageful. Used for paging up and down and for setting thumb size relative to content size.
+         * @desc Set by the constructor. See the similarly named property in the {@link foobarOptions} object. Note however that this property is set automatically (by the {@link FooBar#resize|resize} method) when binding to real content.
+         *
+         * May be updated by calls to the {@link FooBar#resize|resize} method.
+         * @type {number}
+         * @memberOf FooBar.prototype
+         */
+        increment: 1,
+
+        /**
+         * @name barStyles
+         * @summary Scrollbar styles to be applied by {@link FooBar#resize|resize()}.
+         * @desc Set by the constructor. See the similarly named property in the {@link foobarOptions} object.
+         *
+         *  Scrollbar styles to be applied to the scrollbar element upon calls to {@link FooBar#resize|resize()}. It is always preferable to specify styles via a stylesheet. Only specify a `barStyles` object when you need to specifically override (a) stylesheet value(s).
+         *
+         * See type definition for details.
+         *
+         * May be updated through calls to the {@link FooBar#resize|resize} method.
+         * @type {foobarStyles}
+         * @memberOf FooBar.prototype
+         */
+        barStyles: {},
+
+        /**
+         * @readonly
+         * @name paging
+         * @summary Enable page up/dn clicks.
+         * @desc Listen for clicks in page-up and page-down regions of scrollbar.
+         *
+         * The string 'auto' uses the current pixel size of the content area (the dimension reflecting your scrollbar's orientation). Note however that this only makes sense when your index unit is pixels.
+         *
+         * Set by the constructor. See the similarly named property in the {@link foobarOptions} object.
+         *
+         * Read only; changing this value after instantiation will have no effect.
+         * @type {boolean}
+         * @memberOf FooBar.prototype
+         */
+        paging: true,
+
+        /**
+         * @readonly
+         * @name min
+         * @summary The minimum scroll value.
+         * @desc This value is defined by the constructor. This is the lowest value acceptable to `this.index` (the setter) and returnable by `this.index` (the getter).
+         *
+         * As implemented, this value should not be modified after instantiation. This could be remedied by making a setter that calls _calcThumb to reposition the thumb.
+         * @type {number}
+         * @memberOf FooBar.prototype
+         */
+        min: 0,
+
+        /**
+         * @readonly
+         * @name max
+         * @summary The maximum scroll value.
+         * @desc This value is defined by the constructor. This is the highest value acceptable to `this.index` (the setter) and returnable by `this.index` (the getter).
+         *
+         * As implemented, this value should not be modified after instantiation. This could be remedied by making a setter that calls _calcThumb to reposition the thumb.
+         * @type {number}
+         * @memberOf FooBar.prototype
+         */
+        max: 100,
+
+        /**
+         * @summary Index value of the scrollbar.
+         * @desc This is the position of the scroll thumb. Setting this value clamps it to {@link FooBar#min|min}..{@link FooBar#max|max}. It then calls {@link FooBar#_setScroll|_setScroll()} to scroll the content and move thumb.
          *
          * @see {@link FooBar#_setScroll|_setScroll}
          * @type {number}
@@ -243,7 +393,7 @@
          * @summary The current index value of the scrollbar.
          * @desc This _getter_ calculates the current index from the thumb position. The returned value will be in the range `min`..`max`. It is intentionally not rounded.
          *
-         * Use this the getter value as an alternative to (or in addition to) using the {@link foobarOnChange|onchange} callback function.
+         * Use this the getter value as an alternative to (or in addition to) using the {@link FooBar#onchange|onchange} callback function.
          * @readonly
          * @type {number}
          * @memberOf FooBar.prototype
@@ -276,16 +426,16 @@
             if (scaled === undefined) {
                 scaled = (idx - this.min) / (this.max - this.min) * this._thumbMax;
             }
-            this.thumb.style[this.prop.leading] = scaled + 'px';
+            this.thumb.style[this.oh.leading] = scaled + 'px';
         },
 
         scrollRealContent: function (idx) {
             var containerRect = this.content.parentElement.getBoundingClientRect(),
-                sizeProp = this.prop.size,
+                sizeProp = this.oh.size,
                 maxScroll = Math.max(0, this.content[sizeProp] - containerRect[sizeProp]),
                 scroll = (idx - this.min) / (this.max - this.min) * maxScroll;
 
-            this.content.style[this.prop.leading] = -scroll + 'px';
+            this.content.style[this.oh.leading] = -scroll + 'px';
         },
 
         /**
@@ -295,7 +445,18 @@
          *
          * @param {number|string} [increment=this.increment] - Number of index units per pageful. Used for page-up and page-down; and also to size the thumb.
          *
-         * @param {foobarStyles} [barStyles=this.barStyles] - (See type definition for details.) Scrollbar styles to be applied upon calls to {@link FooBar#resize|resize()}. Note that before applying these new values, all the scrollbar's style values are reset, exposing inherited values. Only specify a `barStyles` object when you need to override stylesheet values. If provided, becomes the new default (`this.barStyles`), for use as a default on subsequent calls. It is generally the case that the scrollbar's new position is sufficiently described by the current styles. Therefore it is unusual to need to provide a `barStyles` object on every call to `resize`.
+         * > The thumb size has an absolute minimum of 20 (pixels).
+         *
+         * @param {foobarStyles} [barStyles=this.barStyles] - (See type definition for details.) Scrollbar styles to be applied to the bar element. Note that before applying these new values, _all_ the scrollbar's style values are reset, exposing inherited values.
+         *
+         * Only specify a `barStyles` object when you need to override stylesheet values. If provided, becomes the new default (`this.barStyles`), for use as a default on subsequent calls.
+         *
+         * It is generally the case that the scrollbar's new position is sufficiently described by the current styles. Therefore it is unusual to need to provide a `barStyles` object on every call to `resize`.
+         *
+         * Properties of this object are adjusted as follows before they are applied:
+         * 1. Included pseudo-property names (from {@link FooBar#prop|this.oh}) are translated to actual property names before being applied.
+         * 2. Percentages are recalculated as pixel units when there are margins because CSS does not exclude margins from the calculation and normally does not give you what you wanted.
+         * 3. The "px" unit is appended to raw numbers.
          *
          * @returns {FooBar} Self for chaining.
          * @memberOf FooBar.prototype
@@ -305,7 +466,7 @@
                 container = this.container || bar.parentElement;
 
             if (!container) {
-                throw 'FooBar.resize() called before DOM insertion.';
+                error('resize() called before DOM insertion.');
             }
 
             var containerRect = container.getBoundingClientRect(),
@@ -317,27 +478,29 @@
                 increment = undefined;
             }
 
-            // an increment of "auto" means to use the content area dimension.
-            // note this only makes sense if your index unit is pixels.
+            // Bound to real content: Content was given but no onchange handler.
+            // Set up .onchange, .increment, .min, and .max.
+            // Note this only makes sense if your index unit is pixels.
             if (!this.onchange && this.content) {
                 this.onchange = this.scrollRealContent;
-                increment = containerRect[this.prop.size];
+                increment = containerRect[this.oh.size];
                 this.min = 1;
-                this.max = this.content[this.prop.size] - increment;
+                this.max = this.content[this.oh.size] - increment;
             }
 
             increment = this.increment = increment || this.increment;
             barStyles = this.barStyles = barStyles || this.barStyles;
 
-            // revert all styles to values inherited from stylesheets; then apply styles in `barStyles`
+            // revert all styles to values inherited from stylesheets by removing style attrribute;
+            // then apply styles in `barStyles`
             bar.removeAttribute('style');
 
             for (var key in barStyles) {
                 if (barStyles.hasOwnProperty(key)) {
                     var val = barStyles[key];
 
-                    if (key in this.prop) {
-                        key = this.prop[key];
+                    if (key in this.oh) {
+                        key = this.oh[key];
                     }
 
                     if (!isNaN(Number(val))) {
@@ -391,7 +554,7 @@
          * @private
          * @function _addTestPanelItem
          * @summary Append a test panel element.
-         * @desc If there is a test panel in the DOM (typically an `<ol>...</ol>` element) with class name of `classPrefix + '-test-panel'`, an `<li>...</li>` element will be created and appended to it. This new element will contain a span for each class name given.
+         * @desc If there is a test panel in the DOM (typically an `<ol>...</ol>` element) with class name of `classPrefix + '-test-panel'`), an `<li>...</li>` element will be created and appended to it. This new element will contain a span for each class name given.
          *
          * You should define a CSS selector `.listening` for these spans. This class will be added to the spans to alter their appearance when a listener is added with that class name (prefixed with 'on').
          *
@@ -427,7 +590,7 @@
         },
 
         _calcThumb: function () {
-            var prop = this.prop;
+            var prop = this.oh;
             var thumbComp = window.getComputedStyle(this.thumb);
             var thumbMarginLeading = parseInt(thumbComp[prop.marginLeading]);
             var thumbMarginTrailing = parseInt(thumbComp[prop.marginTrailing]);
@@ -476,32 +639,6 @@
      * @name handlersToBeBound
      * @type {object}
      * @desc The functions defined in this object are all DOM event handlers that are bound by the FooBar constructor to each new instance. In other words, the `this` value of these handlers, once bound, refer to the FooBar object and not to the event emitter. "Do not consume raw."
-     *
-     * Sequence of events:
-     *
-     * ** FOLLOWING UNFINISHED **
-     *
-     * The sequence begins on instantiation when the constructor attaches event handlers for **onmouseover**, **onmouseout**, and **onclick**.
-     *
-     * * **onmouseover** Mouse pointer positioned over the thumb. Starts listening for for either **onmouseout** or **onmousedown**:
-     *
-     *  * **onmouseout** Mouse was moved off the thumb before clicking. Stops listening for *mousedown* event. Sequence cancelled.
-     *
-     *  * **onmousedown** Mouse was clicked while pointer was still positioned over the thumb. The exact position of the click is noted. Unhooks *mouseout* handler. Stops listening for *mousedown* event. Starts listening for *mousemove* and *mouseup*:
-     *
-     *      * **onmousemove** This event repeats while mouse is moved. Thumb position updated (moved) based on current mouse position relative to where it was when first clicked during *mousedown*. (This is a mouse drag, really.)
-     *
-     *      * **mouseup**
-     *
-     * 1. **onmouseover** detects if the mouse is hovering over the thumb. If so:
-     *  1. Adds the `hover` class.  (The reason this is not down with a CSS :hover pseudo-class is that we want it to stay latched until mouseup rather than mouseout.)
-     *  2. Adds an event listener for **mousedown**.
-     * 2. **mouseout** (before **onmousdown** happens) cancels the squence, basically undoing **onmouseover**:
-     *  1. Removes the `hover` class.
-     *  2. Cancels the **mousedown** listener.
-     * 3. **onmousedown**:
-     *  1. Removes itself (this listener).
-     *  2. Adds listeners for **onmousemove** and **onmouseup**.
      */
     var handlersToBeBound = {
         shortStop: function (evt) {
@@ -516,7 +653,7 @@
 
         onclick: function (evt) {
             var thumbBox = this.thumb.getBoundingClientRect();
-            this.index += evt[this.prop.coordinate] < thumbBox[this.prop.leading] ? -this.increment : this.increment;
+            this.index += evt[this.oh.coordinate] < thumbBox[this.oh.leading] ? -this.increment : this.increment;
             this.thumb.classList.add('hover');
 
             var self = this;
@@ -545,7 +682,7 @@
             this.thumb.onmouseover = this.thumb.onmouseout = null;
 
             var thumbBox = this.thumb.getBoundingClientRect();
-            this.pinOffset = evt[this.prop.axis] - thumbBox[this.prop.leading] + this.bar.getBoundingClientRect()[this.prop.leading] + this._thumbMarginLeading;
+            this.pinOffset = evt[this.oh.axis] - thumbBox[this.oh.leading] + this.bar.getBoundingClientRect()[this.oh.leading] + this._thumbMarginLeading;
             document.documentElement.style.cursor = 'default';
 
             this._addEvt('mousemove');
@@ -556,7 +693,7 @@
         },
 
         onmousemove: function (evt) {
-            var scaled = Math.min(this._thumbMax, Math.max(0, evt[this.prop.axis] - this.pinOffset));
+            var scaled = Math.min(this._thumbMax, Math.max(0, evt[this.oh.axis] - this.pinOffset));
             var idx = scaled / this._thumbMax * (this.max - this.min) + this.min;
 
             this._setScroll(idx, scaled);
@@ -586,12 +723,12 @@
         }
     };
 
-    var generalizedStyleDictionaries = {
+    var orientations = {
         vertical: {
-            coordinate:     'y',
+            coordinate:     'clientY',
             axis:           'pageY',
             size:           'height',
-            outside:        'bottom',
+            outside:        'right',
             inside:         'left',
             leading:        'top',
             trailing:       'bottom',
@@ -601,7 +738,7 @@
             delta:          'deltaY'
         },
         horizontal: {
-            coordinate:     'x',
+            coordinate:     'clientX',
             axis:           'pageX',
             size:           'width',
             outside:        'bottom',
@@ -634,10 +771,25 @@
     function cssInjector(referenceElement) {
         var container, style, ID = 'foobars-base-styles';
 
-        if (!cssInjector.text || document.getElementById(ID)) {
+        if (
+            !cssInjector.text || // no stylesheet data
+            document.getElementById(ID) // stylesheet already in DOM
+        ) {
             return;
         }
 
+        if (typeof referenceElement === 'string') {
+            referenceElement = document.querySelector(referenceElement);
+            if (referenceElement) {
+                referenceElement = referenceElement[0];
+            } else {
+                error('Cannot find reference element for CSS injection.');
+            }
+        }
+
+        if (!(referenceElement instanceof Element)) {
+            referenceElement = undefined;
+        }
         style = document.createElement('style');
         style.type = 'text/css';
         style.id = ID;
@@ -655,11 +807,16 @@
 
         container.insertBefore(style, referenceElement);
     }
+    /* inject:css */
     cssInjector.text = 'div.foobar-horizontal,div.foobar-vertical{position:absolute;margin:3px}div.foobar-horizontal>.thumb,div.foobar-vertical>.thumb{position:absolute;background-color:#d3d3d3;-webkit-box-shadow:0 0 1px #000;-moz-box-shadow:0 0 1px #000;box-shadow:0 0 1px #000;border-radius:4px;margin:2px;opacity:.4;transition:opacity .5s}div.foobar-horizontal>.thumb.hover,div.foobar-vertical>.thumb.hover{opacity:1;transition:opacity .5s}div.foobar-vertical{top:0;bottom:0;right:0;width:11px}div.foobar-vertical>.thumb{top:0;right:0;width:7px}div.foobar-horizontal{left:0;right:0;bottom:0;height:11px}div.foobar-horizontal>.thumb{left:0;bottom:0;height:7px}';
+    /* endinject */
+
+    function error(msg) {
+        return 'foobars: ' + msg;
+    }
 
     // Interface
     module.exports = FooBar;
-
 })(
     typeof window === 'undefined' ? module : window.module || (window.FooBar = {}),
     typeof window === 'undefined' ? module.exports : window.module && window.module.exports || (window.FooBar.exports = {})

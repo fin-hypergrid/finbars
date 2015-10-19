@@ -91,6 +91,7 @@
 
         function InitFoobarsWithRealContent(container, content) {
             var horzBar = new FooBar({
+                cssStylesheetReferenceElement: null,
                 orientation: 'horizontal',
                 classPrefix: 'real',
                 barStyles: barStyles,
@@ -166,28 +167,43 @@
                     rect = resizer.getBoundingClientRect(),
                     style = window.getComputedStyle(resizer),
                     box = container.getBoundingClientRect();
+
                 resizer.style.left = box.right + window.scrollX - rect.width + parseInt(style.borderRightWidth) + 'px';
                 resizer.style.top = box.bottom + window.scrollY - rect.height + parseInt(style.borderBottomWidth) + 'px';
+
                 resizer.onmousedown = function onmousedown(evt) {
-                    var pin = {
-                        x: evt.x,
-                        y: evt.y
-                    };
-                    var rect = this.getBoundingClientRect();
+                    var rect = this.getBoundingClientRect(),
+                        box = container.getBoundingClientRect(),
+                        pin = {
+                            x: window.scrollX + evt.clientX,
+                            y: window.scrollY + evt.clientY
+                        };
+
+                    rect = {
+                        left: rect.left + window.scrollX,
+                        top: rect.top + window.scrollY
+                    }
+
                     evt.stopPropagation();
                     evt.preventDefault();
+
                     this.onmousedown = null;
-                    this.onmousemove = function (evt) {
-                        var dx = evt.x - pin.x,
-                            dy = evt.y - pin.y;
-                        this.style.left = rect.left + window.scrollX + dx + 'px';
-                        this.style.top = rect.top + window.scrollY + dy + 'px';
+
+                    window.onmousemove = function (evt) {
+                        var dx = evt.clientX - pin.x,
+                            dy = evt.clientY - pin.y;
+
+                        resizer.style.left = rect.left + window.scrollX + dx + 'px';
+                        resizer.style.top = rect.top + window.scrollY + dy + 'px';
+
                         container.style.width = box.width + dx + 'px';
                         container.style.height = box.height + dy + 'px';
+
                         resize();
-                        this.onmouseup = function () {
-                            this.onmouseup = this.onmousemove = null;
-                            this.onmousedown = onmousedown;
+
+                        resizer.onmouseup = function () {
+                            resizer.onmouseup = window.onmousemove = null;
+                            resizer.onmousedown = onmousedown;
                         }
                     }
                 }
