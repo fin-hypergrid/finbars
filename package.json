@@ -1,7 +1,7 @@
 {
   "name": "foobars",
-  "version": "0.9.0",
-  "main": "./src/js/foobars.js",
+  "version": "1.0.0",
+  "main": "index.js",
   "description": "Styleable scrollbars",
   "repository": {
     "type": "git",
