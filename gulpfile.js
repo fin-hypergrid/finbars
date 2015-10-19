@@ -54,8 +54,8 @@ gulp.task('default', ['build', 'watch'], function() {
 });
 
 gulp.task('inject-css', function () {
-    var target = gulp.src(jsDir + 'foobars.js'),
-        source = gulp.src(srcDir + 'css/foobars.css'),
+    var target = gulp.src(jsDir + 'finbars.js'),
+        source = gulp.src(srcDir + 'css/finbars.css'),
         destination = gulp.dest(destDir);
 
     target

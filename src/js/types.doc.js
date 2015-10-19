@@ -1,4 +1,4 @@
-/** @typedef {object} foobarStyles
+/** @typedef {object} finbarStyles
  *
  * @property {number} [left]
  * @property {number} [top]
@@ -44,57 +44,57 @@
  * @property {string} delta='deltaY'|'deltaX' - The name of the `WheelEvent` property that holds the relevant delta value for the wheel movement.
  */
 
-/** @typedef {function} foobarOnChange
+/** @typedef {function} finbarOnChange
  *
  * @summary A callback function to be invoked whenever the scroll index changes.
  *
- * @desc * Specify a callback function in the `onchange` property of the `options` object parameter to the {@link FooBar|FooBar constructor}.
- * * Set or change the `onchange` property of your `FooBar` object directly.
+ * @desc * Specify a callback function in the `onchange` property of the `options` object parameter to the {@link FinBar|FinBar constructor}.
+ * * Set or change the `onchange` property of your `FinBar` object directly.
  *
  * The function you supply is invoked to handle the following events:
  *
- * * Invoked once by calling the {@link FooBar#index|index} setter
- * * Invoked once by calling the {@link FooBar#resize|resize()} method
+ * * Invoked once by calling the {@link FinBar#index|index} setter
+ * * Invoked once by calling the {@link FinBar#resize|resize()} method
  * * Invoked repeatedly as user drags the scrollbar thumb
- * * Invoked repeatedly as user spins the mouse wheel (but only when mouse pointer is positioned inside the {@link FooBar#container|container} element)
+ * * Invoked repeatedly as user spins the mouse wheel (but only when mouse pointer is positioned inside the {@link FinBar#container|container} element)
  * * _If `.paging`:_ Invoked once when user clicks mouse in the _page-up region_ (the area of the scrollbar above the thumb)
  * * _If `.paging`:_ Invoked once when user clicks mouse in the _page-down region_ (the area of the scrollbar below the thumb)
  *
- * The handler's calling context is the {@link FooBar} object. Note that this includes:
+ * The handler's calling context is the {@link FinBar} object. Note that this includes:
  *
- *  * All the documented properties for the `FooBar` object
+ *  * All the documented properties for the `FinBar` object
  *  * Any additional "custom" properties you may have included in the `options` object
  *
  * And of course your handler will have access to all other objects in it's definition scope.
  *
- * @param {number} index - The scrollbar index, always a value in the range {@link FooBar#min|min}..{@link FooBar#max|max}. (Same as `this.index`.)
+ * @param {number} index - The scrollbar index, always a value in the range {@link FinBar#min|min}..{@link FinBar#max|max}. (Same as `this.index`.)
  */
 
-/** @typedef {object} foobarOptions
+/** @typedef {object} finbarOptions
  *
- * @desc As an "options" object, all properties herein are optional. Omitted properties take on the default values shown; if no default value is shown, the option (and its functionality) are undefined. All options, including any miscellaneous ("custom") options, become properties of `this`, the instantiated FooBar object. As such, they are all available to the {@link foobarOnChange|onchange} callback function, which is called with `this` as its context.
+ * @desc As an "options" object, all properties herein are optional. Omitted properties take on the default values shown; if no default value is shown, the option (and its functionality) are undefined. All options, including any miscellaneous ("custom") options, become properties of `this`, the instantiated FinBar object. As such, they are all available to the {@link finbarOnChange|onchange} callback function, which is called with `this` as its context.
  *
- * @property {number} [orientation='vertical'] - Overrides the prototype default. See {@link FooBar#orientation|orientation} for details.
+ * @property {number} [orientation='vertical'] - Overrides the prototype default. See {@link FinBar#orientation|orientation} for details.
  *
- * @property {number} [min=0] - Overrides the prototype default. See {@link FooBar#min|min} for details.
+ * @property {number} [min=0] - Overrides the prototype default. See {@link FinBar#min|min} for details.
  *
- * @property {number} [max=100] - Overrides the prototype default. See {@link FooBar#max|max} for details.
+ * @property {number} [max=100] - Overrides the prototype default. See {@link FinBar#max|max} for details.
  *
- * @property {number} [index=min] - Overrides the prototype default. See {@link FooBar#index|index} for details. This sets the initial position of the thumb after instantiation.
+ * @property {number} [index=min] - Overrides the prototype default. See {@link FinBar#index|index} for details. This sets the initial position of the thumb after instantiation.
  *
- * @property {foobarOnChange} [onchange] - Overrides the prototype default. See {@link FooBar#onchange|onchange} for details.
+ * @property {finbarOnChange} [onchange] - Overrides the prototype default. See {@link FinBar#onchange|onchange} for details.
  *
- * @property {number} [increment=1] - Overrides the prototype default. See {@link FooBar#increment|increment} for details.
+ * @property {number} [increment=1] - Overrides the prototype default. See {@link FinBar#increment|increment} for details.
  *
- * @property {boolean} [paging=true] - Overrides the prototype default. See {@link FooBar#paging|paging} for details.
+ * @property {boolean} [paging=true] - Overrides the prototype default. See {@link FinBar#paging|paging} for details.
  *
- * @property {foobarStyles} [barStyles] - Overrides the prototype default. See {@link FooBar#barStyles|barStyles} for details.
+ * @property {finbarStyles} [barStyles] - Overrides the prototype default. See {@link FinBar#barStyles|barStyles} for details.
  *
- * @property {string|null} [deltaProp='deltaY'|'deltaX'] - Overrides the prototype default. See {@link FooBar#deltaProp|deltaProp} for details.
+ * @property {string|null} [deltaProp='deltaY'|'deltaX'] - Overrides the prototype default. See {@link FinBar#deltaProp|deltaProp} for details.
  *
  * > NOTE: The default values shown are for vertical and horizontal scrollbars, respectively.
  *
- * @property {string} [classPrefix] - Adds an additional classname to the bar element's class list. See {@link FooBar#classPrefix|classPrefix} for details.
+ * @property {string} [classPrefix] - Adds an additional classname to the bar element's class list. See {@link FinBar#classPrefix|classPrefix} for details.
  *
  * @param {Element|string|null} [cssStylesheetReferenceElement] - Determines where to insert the stylesheet:
  * * `undefined` (or omitted) - inserted as first child of th e`<head>...</head>` element

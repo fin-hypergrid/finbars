@@ -7,13 +7,13 @@
     // This closure supports NodeJS-less client side includes with <script> tags. See https://github.com/joneit/mnm.
 
     /**
-     * @constructor FooBar
+     * @constructor FinBar
      * @summary Create a scrollbar object.
      * @desc Creating a scrollbar is a three-step process:
      *
      * 1. Instantiate the scrollbar object by calling this constructor function. Upon instantiation, the DOM element for the scrollbar (with a single child element for the scrollbar "thumb") is created but is not insert it into the DOM.
-     * 2. After instantiation, it is the caller's responsibility to insert the scrollbar, {@link FooBar#bar|this.bar}, into the DOM.
-     * 3. After insertion, the caller must call {@link FooBar#resize|resize()} at least once to size and position the scrollbar and its thumb. After that, `resize()` should also be called repeatedly on resize events (as the content element is being resized).
+     * 2. After instantiation, it is the caller's responsibility to insert the scrollbar, {@link FinBar#bar|this.bar}, into the DOM.
+     * 3. After insertion, the caller must call {@link FinBar#resize|resize()} at least once to size and position the scrollbar and its thumb. After that, `resize()` should also be called repeatedly on resize events (as the content element is being resized).
      *
      * Suggested configurations:
      * * _**Unbound**_<br/>
@@ -23,9 +23,9 @@
      * * _**Bound to real content**_<br/>
      * Set `options.content` to the "real" content element but omit `options.onchange`. This will cause the scrollbar to use the built-in event handler (`this.scrollRealContent`) which implements smooth scrolling of the content element within the container.
      *
-     * @param {foobarOptions} [options={}] - Options object. See the type definition for member details.
+     * @param {finbarOptions} [options={}] - Options object. See the type definition for member details.
      */
-    function FooBar(options) {
+    function FinBar(options) {
 
         // make bound versions of all the mouse event handler
         var bound = this._bound = {};
@@ -36,11 +36,11 @@
         /**
          * @name thumb
          * @summary The generated scrollbar thumb element.
-         * @desc The thumb element's parent element is always the {@link FooBar#bar|bar} element.
+         * @desc The thumb element's parent element is always the {@link FinBar#bar|bar} element.
          *
          * This property is typically referenced internally only. The size and position of the thumb element is maintained by `_calcThumb()`.
          * @type {Element}
-         * @memberOf FooBar.prototype
+         * @memberOf FinBar.prototype
          */
         var thumb = document.createElement('div');
         thumb.classList.add('thumb');
@@ -51,7 +51,7 @@
         /**
          * @name bar
          * @summary The generated scrollbar element.
-         * @desc The caller inserts this element into the DOM (typically into the content container) and then calls its {@link FooBar#resize|resize()} method.
+         * @desc The caller inserts this element into the DOM (typically into the content container) and then calls its {@link FinBar#resize|resize()} method.
          *
          * Thus the node tree is typically:
          * * A **content container** element, which contains:
@@ -60,11 +60,11 @@
          *        * The **thumb element**
          *
          * @type {Element}
-         * @memberOf FooBar.prototype
+         * @memberOf FinBar.prototype
          */
         var bar = document.createElement('div');
 
-        bar.classList.add('foobar-vertical');
+        bar.classList.add('finbar-vertical');
 
         bar.appendChild(thumb);
         if (this.paging) {
@@ -94,7 +94,7 @@
                 default:
                     if (
                         key.charAt(0) !== '_' &&
-                        typeof FooBar.prototype[key] !== 'function'
+                        typeof FinBar.prototype[key] !== 'function'
                     ) {
                         // override prototype defaults for standard ;
                         // extend with additional properties (for use in onchange event handlers)
@@ -111,18 +111,18 @@
         }
     }
 
-    FooBar.prototype = {
+    FinBar.prototype = {
 
         /**
          * @summary The scrollbar orientation.
-         * @desc Set by the constructor to either `'vertical'` or `'horizontal'`. See the similarly named property in the {@link foobarOptions} object.
+         * @desc Set by the constructor to either `'vertical'` or `'horizontal'`. See the similarly named property in the {@link finbarOptions} object.
          *
          * Useful values are `'vertical'` (the default) or `'horizontal'`.
          *
          * Setting this property resets `this.oh` and `this.deltaProp` and changes the class names so as to reposition the scrollbar as per the CSS rules for the new orientation.
          * @default 'vertical'
          * @type {string}
-         * @memberOf FooBar.prototype
+         * @memberOf FinBar.prototype
          */
         set orientation(orientation) {
             if (orientation === this._orientation) {
@@ -139,9 +139,9 @@
              *
              * This object is used internally to access scrollbars' DOM element properties in a generalized way without needing to constantly query the scrollbar orientation. For example, instead of explicitly coding `this.bar.top` for a vertical scrollbar and `this.bar.left` for a horizontal scrollbar, simply code `this.bar[this.oh.leading]` instead. See the {@link orientationHashType} definition for details.
              *
-             * This object is useful externally for coding generalized {@link foobarOnChange} event handler functions that serve both horizontal and vertical scrollbars.
+             * This object is useful externally for coding generalized {@link finbarOnChange} event handler functions that serve both horizontal and vertical scrollbars.
              * @type {orientationHashType}
-             * @memberOf FooBar.prototype
+             * @memberOf FinBar.prototype
              */
             this.oh = orientations[this._orientation];
 
@@ -152,7 +152,7 @@
             /**
              * @name deltaProp
              * @summary The name of the `WheelEvent` property this scrollbar should listen to.
-             * @desc Set by the constructor. See the similarly named property in the {@link foobarOptions} object.
+             * @desc Set by the constructor. See the similarly named property in the {@link finbarOptions} object.
              *
              * Useful values are `'deltaX'`, `'deltaY'`, or `'deltaZ'`. A value of `null` means to ignore mouse wheel events entirely.
              *
@@ -161,7 +161,7 @@
              * Caveat: Note that a 2-finger drag on an Apple trackpad emits events with _both_ `deltaX ` and `deltaY` data so you might want to delay making the above adjustment until you can determine that you are getting Y data only with no X data at all (which is a sure bet you on a mouse wheel rather than a trackpad).
 
              * @type {object|null}
-             * @memberOf FooBar.prototype
+             * @memberOf FinBar.prototype
              */
             this.deltaProp = this.oh.delta;
 
@@ -179,31 +179,31 @@
 
         /**
          * @summary Callback for scroll events.
-         * @desc Set by the constructor via the similarly named property in the {@link foobarOptions} object. After instantiation, `this.onchange` may be updated directly.
+         * @desc Set by the constructor via the similarly named property in the {@link finbarOptions} object. After instantiation, `this.onchange` may be updated directly.
          *
-         * This event handler is called whenever the value of the scrollbar is changed through user interaction. The typical use case is when the content is scrolled. It is called with the `FooBar` object as its context and the current value of the scrollbar (its index, rounded) as the only parameter.
+         * This event handler is called whenever the value of the scrollbar is changed through user interaction. The typical use case is when the content is scrolled. It is called with the `FinBar` object as its context and the current value of the scrollbar (its index, rounded) as the only parameter.
          *
          * Set this property to `null` to stop emitting such events.
          * @type {function(number)|null}
-         * @memberOf FooBar.prototype
+         * @memberOf FinBar.prototype
          */
         onchange: null,
 
         /**
          * @summary Add a CSS class name to the bar element's class list.
-         * @desc Set by the constructor. See the similarly named property in the {@link foobarOptions} object.
+         * @desc Set by the constructor. See the similarly named property in the {@link finbarOptions} object.
          *
-         * The bar element's class list will always include `foobar-vertical` (or `foobar-horizontal` based on the current orientation). Whenever this property is set to some value, first the old prefix+orientation is removed from the bar element's class list; then the new prefix+orientation is added to the bar element's class list. This property causes _an additional_ class name to be added to the bar element's class list. Therefore, this property will only add at most one additional class name to the list.
+         * The bar element's class list will always include `finbar-vertical` (or `finbar-horizontal` based on the current orientation). Whenever this property is set to some value, first the old prefix+orientation is removed from the bar element's class list; then the new prefix+orientation is added to the bar element's class list. This property causes _an additional_ class name to be added to the bar element's class list. Therefore, this property will only add at most one additional class name to the list.
          *
          * To remove _classname-orientation_ from the bar element's class list, set this property to a falsy value, such as `null`.
          *
-         * > NOTE: You only need to specify an additional class name when you need to have mulltiple different styles of scrollbars on the same page. If this is not a requirement, then you don't need to make a new class; you would just create some additional rules using the same selectors in the built-in stylesheet (../css/foobars.css):
-         * *`div.foobar-vertical` (or `div.foobar-horizontal`) for the scrollbar
-         * *`div.foobar-vertical > div` (or `div.foobar-horizontal > div`) for the "thumb."
+         * > NOTE: You only need to specify an additional class name when you need to have mulltiple different styles of scrollbars on the same page. If this is not a requirement, then you don't need to make a new class; you would just create some additional rules using the same selectors in the built-in stylesheet (../css/finbars.css):
+         * *`div.finbar-vertical` (or `div.finbar-horizontal`) for the scrollbar
+         * *`div.finbar-vertical > div` (or `div.finbar-horizontal > div`) for the "thumb."
          *
          * Of course, your rules should come after the built-ins.
          * @type {string}
-         * @memberOf FooBar.prototype
+         * @memberOf FinBar.prototype
          */
         set classPrefix(prefix) {
             if (this._classPrefix) {
@@ -223,26 +223,26 @@
         /**
          * @name increment
          * @summary Number of scrollbar index units representing a pageful. Used for paging up and down and for setting thumb size relative to content size.
-         * @desc Set by the constructor. See the similarly named property in the {@link foobarOptions} object. Note however that this property is set automatically (by the {@link FooBar#resize|resize} method) when binding to real content.
+         * @desc Set by the constructor. See the similarly named property in the {@link finbarOptions} object. Note however that this property is set automatically (by the {@link FinBar#resize|resize} method) when binding to real content.
          *
-         * May be updated by calls to the {@link FooBar#resize|resize} method.
+         * May be updated by calls to the {@link FinBar#resize|resize} method.
          * @type {number}
-         * @memberOf FooBar.prototype
+         * @memberOf FinBar.prototype
          */
         increment: 1,
 
         /**
          * @name barStyles
-         * @summary Scrollbar styles to be applied by {@link FooBar#resize|resize()}.
-         * @desc Set by the constructor. See the similarly named property in the {@link foobarOptions} object.
+         * @summary Scrollbar styles to be applied by {@link FinBar#resize|resize()}.
+         * @desc Set by the constructor. See the similarly named property in the {@link finbarOptions} object.
          *
-         *  Scrollbar styles to be applied to the scrollbar element upon calls to {@link FooBar#resize|resize()}. It is always preferable to specify styles via a stylesheet. Only specify a `barStyles` object when you need to specifically override (a) stylesheet value(s).
+         *  Scrollbar styles to be applied to the scrollbar element upon calls to {@link FinBar#resize|resize()}. It is always preferable to specify styles via a stylesheet. Only specify a `barStyles` object when you need to specifically override (a) stylesheet value(s).
          *
          * See type definition for details.
          *
-         * May be updated through calls to the {@link FooBar#resize|resize} method.
-         * @type {foobarStyles}
-         * @memberOf FooBar.prototype
+         * May be updated through calls to the {@link FinBar#resize|resize} method.
+         * @type {finbarStyles}
+         * @memberOf FinBar.prototype
          */
         barStyles: {},
 
@@ -254,11 +254,11 @@
          *
          * The string 'auto' uses the current pixel size of the content area (the dimension reflecting your scrollbar's orientation). Note however that this only makes sense when your index unit is pixels.
          *
-         * Set by the constructor. See the similarly named property in the {@link foobarOptions} object.
+         * Set by the constructor. See the similarly named property in the {@link finbarOptions} object.
          *
          * Read only; changing this value after instantiation will have no effect.
          * @type {boolean}
-         * @memberOf FooBar.prototype
+         * @memberOf FinBar.prototype
          */
         paging: true,
 
@@ -270,7 +270,7 @@
          *
          * As implemented, this value should not be modified after instantiation. This could be remedied by making a setter that calls _calcThumb to reposition the thumb.
          * @type {number}
-         * @memberOf FooBar.prototype
+         * @memberOf FinBar.prototype
          */
         min: 0,
 
@@ -282,17 +282,17 @@
          *
          * As implemented, this value should not be modified after instantiation. This could be remedied by making a setter that calls _calcThumb to reposition the thumb.
          * @type {number}
-         * @memberOf FooBar.prototype
+         * @memberOf FinBar.prototype
          */
         max: 100,
 
         /**
          * @summary Index value of the scrollbar.
-         * @desc This is the position of the scroll thumb. Setting this value clamps it to {@link FooBar#min|min}..{@link FooBar#max|max} and calls {@link FooBar#_setScroll|_setScroll()} to scroll the content and move thumb.
+         * @desc This is the position of the scroll thumb. Setting this value clamps it to {@link FinBar#min|min}..{@link FinBar#max|max} and calls {@link FinBar#_setScroll|_setScroll()} to scroll the content and move thumb.
          *
-         * @see {@link FooBar#_setScroll|_setScroll}
+         * @see {@link FinBar#_setScroll|_setScroll}
          * @type {number}
-         * @memberOf FooBar.prototype
+         * @memberOf FinBar.prototype
          */
         set index(idx) {
             idx = Math.min(this.max, Math.max(this.min, idx)); // clamp it
@@ -304,10 +304,10 @@
          * @summary The current index value of the scrollbar.
          * @desc This _getter_ calculates the current index from the thumb position. The returned value will be in the range `min`..`max`. It is intentionally not rounded.
          *
-         * Use this the getter value as an alternative to (or in addition to) using the {@link FooBar#onchange|onchange} callback function.
+         * Use this the getter value as an alternative to (or in addition to) using the {@link FinBar#onchange|onchange} callback function.
          * @readonly
          * @type {number}
-         * @memberOf FooBar.prototype
+         * @memberOf FinBar.prototype
          */
         get index() {
             return this._index;
@@ -317,8 +317,8 @@
          * @summary Move the thumb.
          * @desc Also displays the index value in the test panel and invokes the callback.
          * @param idx - The new scroll index, a value in the range `min`..`max`.
-         * @param [scaled=f(idx)] - The new thumb position in pixels and scaled relative to the containing {@link FooBar#bar|bar} element, i.e., a proportional number in the range `0`..`thumbMax`. When omitted, a function of `idx` is used.
-         * @memberOf FooBar.prototype
+         * @param [scaled=f(idx)] - The new thumb position in pixels and scaled relative to the containing {@link FinBar#bar|bar} element, i.e., a proportional number in the range `0`..`thumbMax`. When omitted, a function of `idx` is used.
+         * @memberOf FinBar.prototype
          */
         _setScroll: function (idx, scaled) {
             idx = this._index = Math.round(idx);
@@ -358,19 +358,19 @@
          *
          * > The thumb size has an absolute minimum of 20 (pixels).
          *
-         * @param {foobarStyles} [barStyles=this.barStyles] - (See type definition for details.) Scrollbar styles to be applied to the bar element. Note that before applying these new values, _all_ the scrollbar's style values are reset, exposing inherited values.
+         * @param {finbarStyles} [barStyles=this.barStyles] - (See type definition for details.) Scrollbar styles to be applied to the bar element. Note that before applying these new values, _all_ the scrollbar's style values are reset, exposing inherited values.
          *
          * Only specify a `barStyles` object when you need to override stylesheet values. If provided, becomes the new default (`this.barStyles`), for use as a default on subsequent calls.
          *
          * It is generally the case that the scrollbar's new position is sufficiently described by the current styles. Therefore it is unusual to need to provide a `barStyles` object on every call to `resize`.
          *
          * Properties of this object are adjusted as follows before they are applied:
-         * 1. Included pseudo-property names (from {@link FooBar#prop|this.oh}) are translated to actual property names before being applied.
+         * 1. Included pseudo-property names (from {@link FinBar#prop|this.oh}) are translated to actual property names before being applied.
          * 2. Percentages are recalculated as pixel units when there are margins because CSS does not exclude margins from the calculation and normally does not give you what you wanted.
          * 3. The "px" unit is appended to raw numbers.
          *
-         * @returns {FooBar} Self for chaining.
-         * @memberOf FooBar.prototype
+         * @returns {FinBar} Self for chaining.
+         * @memberOf FinBar.prototype
          */
         resize: function (increment, barStyles) {
             var bar = this.bar,
@@ -445,7 +445,7 @@
         /**
          * @summary Remove the scrollbar.
          * @desc Unhooks all the event handlers and then removes the element from the DOM. Always call this method prior to disposing of the scrollbar object.
-         * @memberOf FooBar.prototype
+         * @memberOf FinBar.prototype
          */
         remove: function () {
             this._removeEvt('mousedown');
@@ -473,7 +473,7 @@
          *
          * (This is an internal function that is called once by the constructor on every instantiation.)
          * @returns {Element|undefined} The appended `<li>...</li>` element or `undefined` if there is no test panel.
-         * @memberOf FooBar.prototype
+         * @memberOf FinBar.prototype
          */
         _addTestPanelItem: function () {
             var testPanelItem,
@@ -523,7 +523,7 @@
              *
              * NOTE: Scrollbar padding is not taken into account in the current implementation and is assumed to be `0`; use thumb margins in place of scrollbar padding.
              * @type {number}
-             * @memberOf FooBar
+             * @memberOf FinBar
              */
             this._thumbMax = barSize - thumbSize - thumbMargins;
 
@@ -547,7 +547,7 @@
      * @private
      * @name handlersToBeBound
      * @type {object}
-     * @desc The functions defined in this object are all DOM event handlers that are bound by the FooBar constructor to each new instance. In other words, the `this` value of these handlers, once bound, refer to the FooBar object and not to the event emitter. "Do not consume raw."
+     * @desc The functions defined in this object are all DOM event handlers that are bound by the FinBar constructor to each new instance. In other words, the `this` value of these handlers, once bound, refer to the FinBar object and not to the event emitter. "Do not consume raw."
      */
     var handlersToBeBound = {
         shortStop: function (evt) {
@@ -678,7 +678,7 @@
      * otherwise, injects stylesheet immediately before given element
      */
     function cssInjector(referenceElement) {
-        var container, style, ID = 'foobars-base-styles';
+        var container, style, ID = 'finbars-base-styles';
 
         if (
             !cssInjector.text || // no stylesheet data
@@ -720,16 +720,16 @@
     /* endinject */
 
     function error(msg) {
-        return 'foobars: ' + msg;
+        return 'finbars: ' + msg;
     }
 
     // Interface
-    module.exports = FooBar;
+    module.exports = FinBar;
 })(
-    typeof window === 'undefined' ? module : window.module || (window.FooBar = {}),
-    typeof window === 'undefined' ? module.exports : window.module && window.module.exports || (window.FooBar.exports = {})
+    typeof window === 'undefined' ? module : window.module || (window.FinBar = {}),
+    typeof window === 'undefined' ? module.exports : window.module && window.module.exports || (window.FinBar.exports = {})
 ) || (
-    typeof window === 'undefined' || window.module || (window.FooBar = window.FooBar.exports)
+    typeof window === 'undefined' || window.module || (window.FinBar = window.FinBar.exports)
 );
 
 /* About the above IIFE:
@@ -737,7 +737,7 @@
  * 1. Node.js: The IIFE is superfluous but innocuous.
  * 2. In the browser: The IIFE closure serves to keep internal declarations private.
  * 2.a. In the browser as a global: The logic in the actual parameter expressions + the post-invocation expression
- * will put your API in `window.FooBar`.
+ * will put your API in `window.FinBar`.
  * 2.b. In the browser as a module: If you predefine a `window.module` object, the results will be in `module.exports`.
  * The bower component `mnm` makes this easy and also provides a global `require()` function for referencing your module
  * from other closures. In either case, this works with both NodeJs-style export mechanisms -- a single API assignment,
@@ -747,12 +747,12 @@
  * 1. If `window` object undefined, we're in NodeJs so assume there is a `module` object with an `exports` property
  * 2. If `window` object defined, we're in browser
  * 2.a. If `module` object predefined, use it
- * 2.b. If `module` object undefined, create a `FooBar` object
+ * 2.b. If `module` object undefined, create a `FinBar` object
  *
  * After the IIFE returns:
  * Because it always returns undefined, the expression after the || will execute:
  * 1. If `window` object undefined, then we're in NodeJs so we're done
  * 2. If `window` object defined, then we're in browser
  * 2.a. If `module` object predefined, we're done; results are in `moudule.exports`
- * 2.b. If `module` object undefined, redefine`FooBar` to be the `FooBar.exports` object
+ * 2.b. If `module` object undefined, redefine`FinBar` to be the `FinBar.exports` object
  */

@@ -2,18 +2,18 @@
 
 (function (module, exports) { // Closure supports Node-less client side includes with <script> tag.
 
-    var FooBar = require('foobars');
+    var FinBar = require('finbars');
     var barStyles = { trailing: 11 };
 
-    exports.InitFoobarsWithRealContent = function (container, content) {
-        var horzBar = new FooBar({
+    exports.InitFinbarsWithRealContent = function (container, content) {
+        var horzBar = new FinBar({
             orientation: 'horizontal',
             classPrefix: 'real',
             barStyles: barStyles,
             content: content
         });
 
-        var vertBar = new FooBar({
+        var vertBar = new FinBar({
             orientation: 'vertical',
             classPrefix: 'real',
             barStyles: barStyles,
@@ -33,8 +33,8 @@
         return resize;
     };
 
-    exports.InitFoobarsWithVirtualContent = function (container, contents) {
-        var horzBar = new FooBar({
+    exports.InitFinbarsWithVirtualContent = function (container, contents) {
+        var horzBar = new FinBar({
             min: 1001,
             max: 99999,
             increment: 8,
@@ -45,7 +45,7 @@
             content: contents[0]
         });
 
-        var vertBar = new FooBar({
+        var vertBar = new FinBar({
             min: 1001,
             max: 99999,
             increment: 8,

@@ -1,11 +1,11 @@
 {
-  "name": "foobars",
+  "name": "finbars",
   "version": "1.0.0",
   "main": "index.js",
-  "description": "Styleable scrollbars",
+  "description": "Styleable scrollbars for real or virtual content",
   "repository": {
     "type": "git",
-    "url": "git://github.com/openfin/foobars.git"
+    "url": "git://github.com/openfin/finbars.git"
   },
   "scripts": {
     "postinstall": "node_modules/.bin/bower install"

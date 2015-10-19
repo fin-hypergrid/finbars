@@ -5,7 +5,7 @@
 require('should'); // extends Object with `should`
 var Spy = require('mojo-spy');
 
-var FooBar = require('../src/js/foobars.js');
+var FinBar = require('../src/js/finbars.js');
 
 function nullfunc() {}
 
@@ -36,50 +36,50 @@ global.document = {
 
 describe('require() returns an object that', function() {
     it('is a function that', function() {
-        (typeof FooBar).should.equal('function');
+        (typeof FinBar).should.equal('function');
     });
     describe('when used as a constructor, returns an API that', function() {
-        var spy, options, foobar;
+        var spy, options, finbar;
         beforeEach(function() {
             options = {
                 min: 33,
                 max: 55
             };
-            foobar = new FooBar(options);
+            finbar = new FinBar(options);
         });
-        it('is a Foobar', function() {
-            (foobar instanceof FooBar).should.be.true();
+        it('is a FinBar object', function() {
+            (finbar instanceof FinBar).should.be.true();
         });
         it('has a member `min`', function() {
-            foobar.min.should.equal(options.min);
+            finbar.min.should.equal(options.min);
         });
         it('has a member `max` === 2nd constructor param', function() {
-            foobar.max.should.equal(options.max);
+            finbar.max.should.equal(options.max);
         });
         it('has a member `bar` of type Element', function() {
-            (foobar.bar instanceof Element).should.be.true();
+            (finbar.bar instanceof Element).should.be.true();
         });
         it('has a member `thumb` of type Element', function() {
-            (foobar.thumb instanceof Element).should.be.true();
+            (finbar.thumb instanceof Element).should.be.true();
         });
         describe('has a member `index`', function() {
             it('is a getter', function() {
-                (typeof Object.getOwnPropertyDescriptor(FooBar.prototype, 'index').get).should.equal('function');
+                (typeof Object.getOwnPropertyDescriptor(FinBar.prototype, 'index').get).should.equal('function');
             });
         });
         describe('has a member `index`', function() {
             it('is a setter', function() {
-                (typeof Object.getOwnPropertyDescriptor(FooBar.prototype , 'index').set).should.equal('function');
+                (typeof Object.getOwnPropertyDescriptor(FinBar.prototype , 'index').set).should.equal('function');
             });
         });
         describe('has a member `resize`', function() {
             it('is a function', function() {
-                (typeof foobar.resize).should.equal('function');
+                (typeof finbar.resize).should.equal('function');
             });
         });
         describe('has a member `remove`', function() {
             it('is a function', function() {
-                (typeof foobar.remove).should.equal('function');
+                (typeof finbar.remove).should.equal('function');
             });
         });
     });

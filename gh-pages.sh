@@ -1,5 +1,5 @@
 org="openfin"
-module="foobars"
+module="finbars"
 
 # set variable repo to current directory name (without path)
 repo=${PWD##*/}

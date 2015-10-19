@@ -43,7 +43,7 @@ div.scrollable {
     overflow-x: scroll;
     overflow-y: scroll;
 }
-div.foobars {
+div.finbars {
     overflow-x: hidden;
     overflow-y: hidden;
 }
