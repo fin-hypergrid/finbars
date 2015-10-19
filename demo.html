@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>foobars test harness</title>
+    <title>finbars test harness</title>
 
     <style>
         /* This CSS is for the test harness. The scrollbar code itself does not depend on this stylesheet. */
@@ -50,7 +50,7 @@
             overflow-x: scroll;
             overflow-y: scroll;
         }
-        div.foobars {
+        div.finbars {
             overflow-x: hidden;
             overflow-y: hidden;
         }
@@ -84,13 +84,13 @@
         .test-panel span.listening { border-color: yellow }
     </style>
 
-    <script src="https://openfin.github.io/foobars/foobars.min.js"></script>
+    <script src="https://openfin.github.io/finbars/finbars.min.js"></script>
 
     <script>
         var barStyles = { trailing: 11 };
 
-        function InitFoobarsWithRealContent(container, content) {
-            var horzBar = new FooBar({
+        function InitFinbarsWithRealContent(container, content) {
+            var horzBar = new Finbar({
                 cssStylesheetReferenceElement: null,
                 orientation: 'horizontal',
                 classPrefix: 'real',
@@ -98,7 +98,7 @@
                 content: content
             });
 
-            var vertBar = new FooBar({
+            var vertBar = new Finbar({
                 orientation: 'vertical',
                 classPrefix: 'real',
                 barStyles: barStyles,
@@ -118,8 +118,8 @@
             return resize;
         };
 
-        function InitFoobarsWithVirtualContent(container, contents) {
-            var horzBar = new FooBar({
+        function InitFinbarsWithVirtualContent(container, contents) {
+            var horzBar = new Finbar({
                 min: 1001,
                 max: 99999,
                 increment: 8,
@@ -130,7 +130,7 @@
                 content: contents[0]
             });
 
-            var vertBar = new FooBar({
+            var vertBar = new Finbar({
                 min: 1001,
                 max: 99999,
                 increment: 8,
@@ -160,7 +160,7 @@
         window.onload = function () {
             var container = document.getElementById('real');
             var content = container.getElementsByTagName('img')[0];
-            var resize = InitFoobarsWithRealContent(container, content);
+            var resize = InitFinbarsWithRealContent(container, content);
 
             (function(container, resize) {
                 var resizer = container.parentElement.getElementsByClassName('resizer')[0],
@@ -211,19 +211,19 @@
 
             container = document.getElementById('virtual');
             var contents = container.getElementsByClassName('content');
-            InitFoobarsWithVirtualContent(container, contents);
+            InitFinbarsWithVirtualContent(container, contents);
         };
     </script>
 </head>
 <body>
 
     <div class="block">
-        <h1>foobars with real content</h1>
+        <h1>finbars with real content</h1>
         <fieldset>
             <legend>Listening for</legend>
             <ol class="real test-panel"></ol>
         </fieldset>
-        <div id="real" class="container foobars">
+        <div id="real" class="container finbars">
             <!-- <canvas width="400" height="400"></canvas> -->
             <img style="position:absolute" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg/687px-Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg" />
         </div>
@@ -232,7 +232,7 @@
     </div>
 
     <div class="block">
-        <h1>foobars with virtual content</h1>
+        <h1>finbars with virtual content</h1>
         <fieldset>
             <legend>Listening for</legend>
             <ol class="virtual test-panel"></ol>
