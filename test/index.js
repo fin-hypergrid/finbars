@@ -14,6 +14,7 @@ global.Element.prototype = {
     classList: {
         add: nullfunc
     },
+    className: '',
     style: {},
     appendChild: nullfunc,
     insertBefore: nullfunc
@@ -76,9 +77,9 @@ describe('require() returns an object that', function() {
                 (typeof foobar.resize).should.equal('function');
             });
         });
-        describe('has a member `close`', function() {
+        describe('has a member `remove`', function() {
             it('is a function', function() {
-                (typeof foobar.close).should.equal('function');
+                (typeof foobar.remove).should.equal('function');
             });
         });
     });

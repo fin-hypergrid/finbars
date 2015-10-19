@@ -21,6 +21,6 @@
         "recurse": true,
         "verbose": true,
         "destination": "./doc/",
-        "private": true
+        "private": false
     }
 }
