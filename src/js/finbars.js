@@ -310,7 +310,7 @@
         set index(idx) {
             idx = Math.min(this._max, Math.max(this._min, idx)); // clamp it
             this._setScroll(idx);
-            this._setThumbSize();
+            // this._setThumbSize();
         },
         get index() {
             return this._index;
