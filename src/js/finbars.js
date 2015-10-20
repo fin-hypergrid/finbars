@@ -587,12 +587,12 @@
 
         onclick: function (evt) {
             var thumbBox = this.thumb.getBoundingClientRect(),
-                upwards = evt[this.oh.coordinate] < thumbBox[this.oh.leading];
+                goingUp = evt[this.oh.coordinate] < thumbBox[this.oh.leading];
 
             if (typeof this.paging === 'object') {
-                this.index = this.paging[upwards ? 'up' : 'down']();
+                this.index = this.paging[goingUp ? 'up' : 'down'](Math.round(this.index));
             } else {
-                this.index += upwards ? -this.increment : this.increment;
+                this.index += goingUp ? -this.increment : this.increment;
             }
 
             // make the thumb glow momentarily
