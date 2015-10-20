@@ -407,18 +407,17 @@
             }
             if (this.onchange === this.scrollRealContent) {
                 this.containerSize = containerRect[this.oh.size];
-                increment = this.containerSize / (this.contentSize - this.containerSize) * (this._max - this._min);
+                this.increment = this.containerSize / (this.contentSize - this.containerSize) * (this._max - this._min);
             } else {
                 this.containerSize = 1;
             }
 
-            increment = this.increment = increment || this.increment;
-            barStyles = this.barStyles = barStyles || this.barStyles;
 
             // revert all styles to values inherited from stylesheets by removing style attribute;
             // then apply styles in `barStyles`
             bar.removeAttribute('style');
 
+            barStyles = this.barStyles = barStyles || this.barStyles;
             for (var key in barStyles) {
                 if (barStyles.hasOwnProperty(key)) {
                     var val = barStyles[key];
@@ -588,12 +587,12 @@
 
         onclick: function (evt) {
             var thumbBox = this.thumb.getBoundingClientRect(),
-                downwards = evt[this.oh.coordinate] < thumbBox[this.oh.leading];
+                upwards = evt[this.oh.coordinate] < thumbBox[this.oh.leading];
 
             if (typeof this.paging === 'object') {
-                this.index = this.paging[downwards ? 'down' : 'up']();
+                this.index = this.paging[upwards ? 'up' : 'down']();
             } else {
-                this.index += downwards ? -this.increment : this.increment;
+                this.index += upwards ? -this.increment : this.increment;
             }
 
             // make the thumb glow momentarily
