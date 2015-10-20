@@ -158,7 +158,7 @@
         window.onload = function () {
             var container = document.getElementById('real'),
                 content = container.getElementsByTagName('img')[0],
-                resize = example.InitFinbarsWithRealContent(container, content);
+                resize = InitFinbarsWithRealContent(container, content);
 
             (function(container, resize) {
                 var contentRect = content.getBoundingClientRect(),
