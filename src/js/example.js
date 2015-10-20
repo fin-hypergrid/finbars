@@ -64,7 +64,7 @@
             var s = '';
             idx = Math.min(idx, this.range.max - 7);
             for (var limit = idx + 10; idx < limit; ++idx) {
-                s += idx + '<br>';
+                s += Math.round(idx) + '<br>';
             }
             this.content.innerHTML = s;
         }

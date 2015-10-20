@@ -96,6 +96,7 @@
                     validRange(option);
                     this._min = option.min;
                     this._max = option.max;
+                    this.contentSize = option.max - option.min + 1;
                     break;
 
                 default:
@@ -224,8 +225,10 @@
 
         /**
          * @name increment
-         * @summary Number of scrollbar index units representing a pageful. Used for paging up and down and for setting thumb size relative to content size.
-         * @desc Set by the constructor. See the similarly named property in the {@link finbarOptions} object. Note however that this property is set automatically (by the {@link FinBar#resize|resize} method) when binding to real content.
+         * @summary Number of scrollbar index units representing a pageful. Used exclusively for paging up and down and for setting thumb size relative to content size.
+         * @desc Set by the constructor. See the similarly named property in the {@link finbarOptions} object.
+         *
+         * When your content area is resized you must call the {@link FinBar#resize|resize} method with the updated increment value. Note however that when binding to real content, `resize()` does this calculation for you so you don't have to pass a value.
          *
          * May be updated by calls to the {@link FinBar#resize|resize} method.
          * @type {number}
@@ -280,6 +283,7 @@
             validRange(range);
             this._min = range.min;
             this._max = range.max;
+            this.contentSize = range.max - range.min + 1;
             this.index = this.index; // re-clamp
         },
         get range() {
@@ -306,7 +310,7 @@
         set index(idx) {
             idx = Math.min(this._max, Math.max(this._min, idx)); // clamp it
             this._setScroll(idx);
-            this._calcThumb();
+            this._setThumbSize();
         },
         get index() {
             return this._index;
@@ -321,7 +325,7 @@
          * @memberOf FinBar.prototype
          */
         _setScroll: function (idx, scaled) {
-            idx = this._index = Math.round(idx);
+            this._index = idx;
 
             // Display the index value in the test panel
             if (this.testPanelItem && this.testPanelItem.index instanceof Element) {
@@ -344,8 +348,9 @@
             var containerRect = this.content.parentElement.getBoundingClientRect(),
                 sizeProp = this.oh.size,
                 maxScroll = Math.max(0, this.content[sizeProp] - containerRect[sizeProp]),
+                //scroll = Math.min(idx, maxScroll);
                 scroll = (idx - this._min) / (this._max - this._min) * maxScroll;
-
+            //console.log('scroll: ' + scroll);
             this.content.style[this.oh.leading] = -scroll + 'px';
         },
 
@@ -373,36 +378,44 @@
          * @memberOf FinBar.prototype
          */
         resize: function (increment, barStyles) {
-            var bar = this.bar,
-                container = this.container || bar.parentElement;
+            var bar = this.bar;
 
             if (!bar.parentNode) {
                 return; // not in DOM yet so nothing to do
             }
 
-            var containerRect = container.getBoundingClientRect(),
-                barRect = bar.getBoundingClientRect();
+            var barRect = bar.getBoundingClientRect(),
+                container = this.container || bar.parentElement,
+                containerRect = container.getBoundingClientRect();
 
-            // promote 2nd param if 1st omitted
+            // shift args if if 1st arg omitted
             if (typeof increment === 'object') {
                 barStyles = increment;
                 increment = undefined;
             }
 
-            // Bound to real content: Content was given but no onchange handler.
-            // Set up .onchange, .increment, .min, and .max.
-            // Note this only makes sense if your index unit is pixels.
-            if (this.content && !this.onchange && this.onchange !== this.scrollRealContent) {
-                this.onchange = this.scrollRealContent;
-                increment = containerRect[this.oh.size];
-                this._min = this._index = 0;
-                this._max = this.content[this.oh.size] - increment - 1;
-            }
-
             increment = this.increment = increment || this.increment;
             barStyles = this.barStyles = barStyles || this.barStyles;
 
-            // revert all styles to values inherited from stylesheets by removing style attrribute;
+            // Bound to real content: Content was given but no onchange handler.
+            // Set up .onchange, .containerSize, and .increment.
+            // Note this only makes sense if your index unit is pixels.
+            if (this.content) {
+                if (!this.onchange) {
+                    this.onchange = this.scrollRealContent;
+                    this.contentSize = this.content[this.oh.size];
+                    this._min = 0;
+                    this._max = this.contentSize - 1;
+                }
+            }
+            if (this.onchange === this.scrollRealContent) {
+                this.containerSize = containerRect[this.oh.size];
+                increment = this.containerSize / (this.contentSize - this.containerSize) * (this._max - this._min);
+            } else {
+                this.containerSize = this.incr('down');
+            }
+
+            // revert all styles to values inherited from stylesheets by removing style attribute;
             // then apply styles in `barStyles`
             bar.removeAttribute('style');
 
@@ -432,7 +445,7 @@
 
             var index = this.index;
             this.testPanelItem = this.testPanelItem || this._addTestPanelItem();
-            this._calcThumb();
+            this._setThumbSize();
             this.index = index;
 
             if (this.deltaProp !== null) {
@@ -440,6 +453,52 @@
             }
 
             return this;
+        },
+
+        incr: function (dir) {
+            var increment = this.increment;
+
+            if (increment === 'object') {
+                increment = increment[dir];
+                if (typeof increment === 'function') {
+                    increment = increment();
+                }
+            }
+
+            return increment;
+        },
+
+        _setThumbSize: function () {
+            var oh = this.oh,
+                thumbComp = window.getComputedStyle(this.thumb),
+                thumbMarginLeading = parseInt(thumbComp[oh.marginLeading]),
+                thumbMarginTrailing = parseInt(thumbComp[oh.marginTrailing]),
+                thumbMargins = thumbMarginLeading + thumbMarginTrailing,
+                barSize = this.bar.getBoundingClientRect()[oh.size],
+                thumbSize = barSize * this.containerSize / this.contentSize;
+
+            if (this.containerSize < this.contentSize) {
+                this.bar.style.visibility = 'visible';
+                this.thumb.style[oh.size] = Math.max(20, thumbSize) + 'px';
+            } else {
+                this.bar.style.visibility = 'hidden';
+            }
+
+            /**
+             * @private
+             * @name _thumbMax
+             * @summary Maximum offset of thumb's leading edge.
+             * @desc This is the pixel offset within the scrollbar of the thumb when it is at its maximum position at the extreme end of its range.
+             *
+             * This value takes into account the newly calculated size of the thumb element (including its margins) and the inner size of the scrollbar (the thumb's containing element, including _its_ margins).
+             *
+             * NOTE: Scrollbar padding is not taken into account in the current implementation and is assumed to be `0`; use thumb margins in place of scrollbar padding.
+             * @type {number}
+             * @memberOf FinBar
+             */
+            this._thumbMax = barSize - thumbSize - thumbMargins;
+
+            this._thumbMarginLeading = thumbMarginLeading; // used in mousedown
         },
 
         /**
@@ -455,10 +514,10 @@
             (this.container || this.bar.parentElement)._removeEvt('wheel', this._bound.onwheel);
 
             this.bar.onclick =
-            this.thumb.onclick =
-            this.thumb.onmouseover =
-            this.thumb.transitionend =
-            this.thumb.onmouseout = null;
+                this.thumb.onclick =
+                    this.thumb.onmouseover =
+                        this.thumb.transitionend =
+                            this.thumb.onmouseout = null;
 
             this.bar.remove();
         },
@@ -496,38 +555,6 @@
             }
 
             return testPanelItem;
-        },
-
-        _calcThumb: function () {
-            var prop = this.oh;
-            var thumbComp = window.getComputedStyle(this.thumb);
-            var thumbMarginLeading = parseInt(thumbComp[prop.marginLeading]);
-            var thumbMarginTrailing = parseInt(thumbComp[prop.marginTrailing]);
-            var thumbMargins = thumbMarginLeading + thumbMarginTrailing;
-            var barBox = this.bar.getBoundingClientRect();
-            var barSize = barBox[prop.size];
-
-            // adjust size of thumb to `increment` as fraction of index range
-            var range = this._max - this._min + this.increment; // adding in `increment` puts last item on bottom of last page rather than top
-            var normalizedThumbSize = this.increment / range;
-            var thumbSize = Math.max(20, Math.round(normalizedThumbSize * barSize));
-            this.thumb.style[prop.size] = thumbSize + 'px';
-
-            /**
-             * @private
-             * @name _thumbMax
-             * @summary Maximum offset of thumb's leading edge.
-             * @desc This is the pixel offset within the scrollbar of the thumb when it is at its maximum position at the extreme end of its range.
-             *
-             * This value takes into account the newly calculated size of the thumb element (including its margins) and the inner size of the scrollbar (the thumb's containing element, including _its_ margins).
-             *
-             * NOTE: Scrollbar padding is not taken into account in the current implementation and is assumed to be `0`; use thumb margins in place of scrollbar padding.
-             * @type {number}
-             * @memberOf FinBar
-             */
-            this._thumbMax = barSize - thumbSize - thumbMargins;
-
-            this._thumbMarginLeading = thumbMarginLeading;
         },
 
         _addEvt: function (evtName) {
@@ -574,7 +601,7 @@
 
         onclick: function (evt) {
             var thumbBox = this.thumb.getBoundingClientRect();
-            this.index += evt[this.oh.coordinate] < thumbBox[this.oh.leading] ? -this.increment : this.increment;
+            this.index += evt[this.oh.coordinate] < thumbBox[this.oh.leading] ? -this.incr('up') : this.incr('down');
             this.thumb.classList.add('hover');
 
             var self = this;
