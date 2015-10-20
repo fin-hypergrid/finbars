@@ -156,9 +156,9 @@
         };
 
         window.onload = function () {
-            var container = document.getElementById('real');
-            var content = container.getElementsByTagName('img')[0];
-            var resize = InitFinbarsWithRealContent(container, content);
+            var container = document.getElementById('real'),
+                content = container.getElementsByTagName('img')[0],
+                resize = example.InitFinbarsWithRealContent(container, content);
 
             (function(container, resize) {
                 var contentRect = content.getBoundingClientRect(),

@@ -255,14 +255,14 @@
          * @readonly
          * @name paging
          * @summary Enable page up/dn clicks.
-         * @desc Listen for clicks in page-up and page-down regions of scrollbar.
+         * @desc Set by the constructor. See the similarly named property in the {@link finbarOptions} object.
          *
-         * The string 'auto' uses the current pixel size of the content area (the dimension reflecting your scrollbar's orientation). Note however that this only makes sense when your index unit is pixels.
+         * If truthy, listen for clicks in page-up and page-down regions of scrollbar.
          *
-         * Set by the constructor. See the similarly named property in the {@link finbarOptions} object.
+         * If an object, call `.paging.up()` on page-up clicks and `.paging.down()` will be called on page-down clicks.
          *
-         * Read only; changing this value after instantiation will have no effect.
-         * @type {boolean}
+         * Changing the truthiness of this value after instantiation currently has no effect.
+         * @type {boolean|object}
          * @memberOf FinBar.prototype
          */
         paging: true,
@@ -329,12 +329,12 @@
 
             // Display the index value in the test panel
             if (this.testPanelItem && this.testPanelItem.index instanceof Element) {
-                this.testPanelItem.index.innerHTML = idx;
+                this.testPanelItem.index.innerHTML = Math.round(idx);
             }
 
             // Call the callback
             if (this.onchange) {
-                this.onchange.call(this, idx);
+                this.onchange.call(this, Math.round(idx));
             }
 
             // Move the thumb
@@ -394,9 +394,6 @@
                 increment = undefined;
             }
 
-            increment = this.increment = increment || this.increment;
-            barStyles = this.barStyles = barStyles || this.barStyles;
-
             // Bound to real content: Content was given but no onchange handler.
             // Set up .onchange, .containerSize, and .increment.
             // Note this only makes sense if your index unit is pixels.
@@ -412,8 +409,11 @@
                 this.containerSize = containerRect[this.oh.size];
                 increment = this.containerSize / (this.contentSize - this.containerSize) * (this._max - this._min);
             } else {
-                this.containerSize = this.incr('down');
+                this.containerSize = 1;
             }
+
+            increment = this.increment = increment || this.increment;
+            barStyles = this.barStyles = barStyles || this.barStyles;
 
             // revert all styles to values inherited from stylesheets by removing style attribute;
             // then apply styles in `barStyles`
@@ -455,19 +455,6 @@
             return this;
         },
 
-        incr: function (dir) {
-            var increment = this.increment;
-
-            if (increment === 'object') {
-                increment = increment[dir];
-                if (typeof increment === 'function') {
-                    increment = increment();
-                }
-            }
-
-            return increment;
-        },
-
         _setThumbSize: function () {
             var oh = this.oh,
                 thumbComp = window.getComputedStyle(this.thumb),
@@ -475,11 +462,11 @@
                 thumbMarginTrailing = parseInt(thumbComp[oh.marginTrailing]),
                 thumbMargins = thumbMarginLeading + thumbMarginTrailing,
                 barSize = this.bar.getBoundingClientRect()[oh.size],
-                thumbSize = barSize * this.containerSize / this.contentSize;
+                thumbSize = Math.max(20, barSize * this.containerSize / this.contentSize);
 
             if (this.containerSize < this.contentSize) {
                 this.bar.style.visibility = 'visible';
-                this.thumb.style[oh.size] = Math.max(20, thumbSize) + 'px';
+                this.thumb.style[oh.size] = thumbSize + 'px';
             } else {
                 this.bar.style.visibility = 'hidden';
             }
@@ -575,7 +562,7 @@
             valid =  keys.length === 2 &&
                 typeof range.min === 'number' &&
                 typeof range.max === 'number' &&
-                range.min < range.max;
+                range.min <= range.max;
 
         if (!valid) {
             error('Invalid .range object.');
@@ -600,10 +587,17 @@
         },
 
         onclick: function (evt) {
-            var thumbBox = this.thumb.getBoundingClientRect();
-            this.index += evt[this.oh.coordinate] < thumbBox[this.oh.leading] ? -this.incr('up') : this.incr('down');
-            this.thumb.classList.add('hover');
+            var thumbBox = this.thumb.getBoundingClientRect(),
+                downwards = evt[this.oh.coordinate] < thumbBox[this.oh.leading];
 
+            if (typeof this.paging === 'object') {
+                this.index = this.paging[downwards ? 'down' : 'up']();
+            } else {
+                this.index += downwards ? -this.increment : this.increment;
+            }
+
+            // make the thumb glow momentarily
+            this.thumb.classList.add('hover');
             var self = this;
             this.thumb.addEventListener('transitionend', function waitForIt() {
                 this.removeEventListener('transitionend', waitForIt);
