@@ -228,9 +228,9 @@
          * @summary Number of scrollbar index units representing a pageful. Used exclusively for paging up and down and for setting thumb size relative to content size.
          * @desc Set by the constructor. See the similarly named property in the {@link finbarOptions} object.
          *
-         * When your content area is resized you must call the {@link FinBar#resize|resize} method with the updated increment value. Note however that when binding to real content, `resize()` does this calculation for you so you don't have to pass a value.
-         *
-         * May be updated by calls to the {@link FinBar#resize|resize} method.
+         * Can also be given as a parameter to the {@link FinBar#resize|resize} method, which is pertinent because content area size changes affect the definition of a "pageful." However, you only need to do this if this value is being used. It not used when:
+         * * you define `paging.up` and `paging.down`
+         * * your scrollbar is using `scrollRealContent`
          * @type {number}
          * @memberOf FinBar.prototype
          */
@@ -357,11 +357,11 @@
         /**
          * @summary Recalculate thumb position.
          *
-         * @desc This method recalculates the thumb size and position. Call it once after inserting your scrollbar into the DOM, and repeatedly while resizing the scrollbar (which typically happens when the scrollbar's parent is resized by user, as when user drags window's lower right corner resize handle).
+         * @desc This method recalculates the thumb size and position. Call it once after inserting your scrollbar into the DOM, and repeatedly while resizing the scrollbar (which typically happens when the scrollbar's parent is resized by user.
          *
-         * @param {number|string} [increment=this.increment] - Number of index units per pageful. Used for page-up and page-down; and also to size the thumb.
+         * > This function shifts args if first arg omitted.
          *
-         * > The thumb size has an absolute minimum of 20 (pixels).
+         * @param {number} [increment=this.increment] - Resets {@link FooBar#increment|increment} (see).
          *
          * @param {finbarStyles} [barStyles=this.barStyles] - (See type definition for details.) Scrollbar styles to be applied to the bar element. Note that before applying these new values, _all_ the scrollbar's style values are reset, exposing inherited values.
          *
@@ -454,6 +454,11 @@
             return this;
         },
 
+        /**
+         * @private
+         * @desc The thumb size has an absolute minimum of 20 (pixels).
+         * @memberOf FinBar.prototype
+         */
         _setThumbSize: function () {
             var oh = this.oh,
                 thumbComp = window.getComputedStyle(this.thumb),
@@ -478,9 +483,9 @@
              *
              * This value takes into account the newly calculated size of the thumb element (including its margins) and the inner size of the scrollbar (the thumb's containing element, including _its_ margins).
              *
-             * NOTE: Scrollbar padding is not taken into account in the current implementation and is assumed to be `0`; use thumb margins in place of scrollbar padding.
+             * NOTE: Scrollbar padding is not taken into account and assumed to be 0 in the current implementation and is assumed to be `0`; use thumb margins in place of scrollbar padding.
              * @type {number}
-             * @memberOf FinBar
+             * @memberOf FinBar.prototype
              */
             this._thumbMax = barSize - thumbSize - thumbMargins;
 

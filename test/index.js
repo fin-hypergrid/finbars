@@ -43,12 +43,14 @@ global.document = {
         return [new Element];
     }
 };
-global.window.getComputedStyle = function () {
-    return {
-        marginTop: 0,
-        marginBottom: 0,
-        marginLeft: 0,
-        marginRight: 0,
+global.window = {
+    getComputedStyle: function () {
+        return {
+            marginTop: 0,
+            marginBottom: 0,
+            marginLeft: 0,
+            marginRight: 0,
+        };
     }
 };
 
