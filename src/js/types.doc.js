@@ -96,7 +96,7 @@
  *
  * @property {boolean} [paging=true] - Overrides the prototype default. See {@link FinBar#paging|paging} for details.
  *
- * @property {finbarStyles} [barStyles] - Overrides the prototype default. See {@link FinBar#barStyles|barStyles} for details.
+ * @property {finbarStyles|null} [barStyles] - Overrides the prototype default. See {@link FinBar#barStyles|barStyles} for details.
  *
  * @property {string|null} [deltaProp='deltaY'|'deltaX'] - Overrides the prototype default. See {@link FinBar#deltaProp|deltaProp} for details.
  *

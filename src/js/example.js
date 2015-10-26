@@ -9,14 +9,14 @@
         var horzBar = new FinBar({
             orientation: 'horizontal',
             classPrefix: 'real',
-            barStyles: barStyles,
+            //barStyles: barStyles,
             content: content
         });
 
         var vertBar = new FinBar({
             orientation: 'vertical',
             classPrefix: 'real',
-            barStyles: barStyles,
+            //barStyles: barStyles,
             content: content
         });
 
@@ -26,8 +26,8 @@
         resize();
 
         function resize() {
-            horzBar.resize();
-            vertBar.resize();
+            horzBar.shortenBy(vertBar).resize();
+            vertBar.shortenBy(horzBar).resize();
         }
 
         return resize;
