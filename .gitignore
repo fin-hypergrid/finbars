@@ -1,7 +1,7 @@
 .DS_Store
 .idea
 bower_components
-browserified
+browserified/finbars.js
 doc
 node_modules
-index.js
+/index.js
