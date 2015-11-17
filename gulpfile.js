@@ -14,7 +14,8 @@ var srcDir  = './src/',
     testDir = './test/',
     jsDir   = srcDir + 'js/',
     jsFiles = '**/*.js',
-    destDir = './';
+    npmDir  = './',
+    browDir = './browserified/';
 
 var js = {
     dir   : jsDir,
@@ -26,10 +27,16 @@ var js = {
 gulp.task('lint', lint);
 gulp.task('test', test);
 gulp.task('doc', doc);
+gulp.task('browserify', browserify);
 
 gulp.task('build', function(callback) {
     clearBashScreen();
-    runSequence('lint', 'test', 'doc', 'inject-css',
+    runSequence(
+        'lint',
+        'test',
+        'doc',
+        'inject-css', // outputs ./index.js for npm publish
+        'browserify', // outputs to ./browserified/finbars.js for githup.io publish
         callback);
 });
 
@@ -55,9 +62,7 @@ gulp.task('default', ['build', 'watch'], function() {
 
 gulp.task('inject-css', function () {
     var target = gulp.src(jsDir + 'finbars.js'),
-        source = gulp.src(srcDir + 'css/finbars.css'),
-        destination = gulp.dest(destDir);
-
+        source = gulp.src(srcDir + 'css/finbars.css');
     target
         .pipe($$.inject(source, {
             transform: cssToJsFn,
@@ -65,7 +70,7 @@ gulp.task('inject-css', function () {
             endtag: '/* endinject */'
         }))
         .pipe($$.rename('index.js'))
-        .pipe(destination);
+        .pipe(gulp.dest(npmDir));
 });
 
 //  //  //  //  //  //  //  //  //  //  //  //
@@ -75,7 +80,7 @@ function cssToJsFn(filePath, file) {
         .minify(file.contents.toString())
         .styles;
 
-    file.contents = new Buffer("cssInjector.text = '" + escapeStr(css) + "';");
+    file.contents = new Buffer("cssFinBars = '" + escapeStr(css) + "';");
 
     return file.contents.toString('utf8');
 }
@@ -93,6 +98,19 @@ function test(cb) {
         .pipe($$.mocha({reporter: 'spec'}));
 }
 
+function browserify() {
+    return gulp.src(browDir + 'index.js')
+        .pipe($$.browserify({
+            //insertGlobals : true,
+            debug : true
+        }))
+        //.pipe($$.sourcemaps.init({loadMaps: true}))
+        // Add transformation tasks to the pipeline here:
+        //.pipe(uglify())
+        .on('error', $$.util.log)
+        .pipe($$.rename('finbars.js'))
+        .pipe(gulp.dest(browDir));
+}
 function doc(cb) {
     exec(path.resolve('jsdoc.sh'), function (err, stdout, stderr) {
         console.log(stdout);

@@ -4,9 +4,9 @@
 bower*
 gulp*
 README.md
+browserified
+doc
 jsdoc-template
 node_modules
-bower_components
 src
-doc
 test
