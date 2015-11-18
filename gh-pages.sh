@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 org="openfin"
 module="finbars"
 
@@ -25,8 +26,8 @@ git rm -rf -q .
 # copy the doc directory from the workspace
 cp -R ../../$repo/doc/* . >/dev/null
 
-# copy $module.js from repo/browserified to the cdn directory as $module.js
-cp ../../$repo/browserified/$module.js . >/dev/null
+# copy $module.js from $repo/build to the cdn directory as $module.js
+cp ../../$repo/build/$module.js . >/dev/null
 
 # make a minified version
 uglify -s $module.js -o $module.min.js

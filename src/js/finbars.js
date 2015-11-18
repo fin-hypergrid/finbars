@@ -82,9 +82,6 @@ function FinBar(options) {
         if (options.hasOwnProperty(key)) {
             var option = options[key];
             switch (key) {
-            case 'cssStylesheetReferenceElement':
-                cssInjector(cssFinBars, 'finbar-base', option);
-                break;
 
             case 'index':
                 this._index = option;
@@ -107,9 +104,12 @@ function FinBar(options) {
                     this[key] = option;
                 }
                 break;
+
             }
         }
     }
+
+    cssInjector(cssFinBars, 'finbar-base', options.cssStylesheetReferenceElement);
 }
 
 FinBar.prototype = {

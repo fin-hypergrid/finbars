@@ -96,35 +96,3 @@ An HTML file is included as an example. I user-tested this example file on:
     * Firefox (40.0.3)
     * IE 11 (11.0.9600.17914, emulation mode = Edge)
     * IE 10 (IE 11, emulation mode = 10)
-
-## What kind of module is this?
-
-This is a modified Node module; its contents are inside a closure. Although this is an extra and unnecessary closure from Node's point of view, setting up the file this way also allows it to be included directly from the client HTML with a `<script>` tag, as follows:
-
-```html
-<script src="js/finbars.js"></script>
-```
-
-This will create a single top-level object `FinBar`, the constructor.
-
-Alternatively, [mnm.js (bower component)](https://github.com/joneit/mnm) allows your modules to reference each other with a provided `require()` function. This is a lightweight alternative to using browserify (although there is not file concatenation involved). The setup might look something like this:
-
-```html
-<script src="bower_components/mnm/src/js/mnm.js"></script>
-
-<script src="src/finbars.js"></script>
-<script> module.cache('finbars'); </script>
-```
-
-and used as follows:
-
-```javascript
-window.onload = function () {
-    var FinBar = require('finbars');
-    var scrollbar = new FinBar({ ... });
-    // etc.
-}):
-</script>
-```
-
-Alternatively, you can use [mnm.js (bower component)](https://github.com/joneit/mnm) which does something similar but allows your modules to reference each other with a provided `require()` function. This is a lightweight alternative to using browserify (although there is not file concatenation involved).

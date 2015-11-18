@@ -4,24 +4,16 @@
     <meta charset="UTF-8">
     <title>finbars test harness</title>
 
-    <link rel="stylesheet" type="text/css" href="css/finbars.css"/>
     <link rel="stylesheet" type="text/css" href="css/example.css"/>
 
-    <script src="/bower_components/mnm/src/js/mnm.js"></script>
-
-    <script src="js/finbars.js"></script>
-    <script> module.cache('finbars'); </script>
-
-    <script src="js/example.js"></script>
-    <script> module.cache('example'); </script>
+    <script src="finbars.js"> </script>
+    <script src="example.js"> </script>
 
     <script>
         window.onload = function () {
-            var example = require('example');
-
             var container = document.getElementById('real'),
                 content = container.getElementsByTagName('img')[0],
-                resize = example.InitFinbarsWithRealContent(container, content);
+                resize = InitFinbarsWithRealContent(container, content);
 
             (function(container, resize) {
                 var contentRect = content.getBoundingClientRect(),
@@ -79,7 +71,7 @@
 
             container = document.getElementById('virtual');
             var contents = container.getElementsByClassName('content');
-            example.InitFinbarsWithVirtualContent(container, contents);
+            InitFinbarsWithVirtualContent(container, contents);
         };
     </script>
 </head>

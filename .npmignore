@@ -4,7 +4,7 @@
 bower*
 gulp*
 README.md
-browserified
+build
 doc
 jsdoc-template
 node_modules

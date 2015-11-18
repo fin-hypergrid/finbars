@@ -10,12 +10,12 @@ var runSequence = require('run-sequence'),
     escapeStr   = require('js-string-escape'),
     CleanCss    = require("clean-css");
 
-var srcDir  = './src/',
-    testDir = './test/',
-    jsDir   = srcDir + 'js/',
-    jsFiles = '**/*.js',
-    npmDir  = './',
-    browDir = './browserified/';
+var srcDir   = './src/',
+    testDir  = './test/',
+    jsDir    = srcDir + 'js/',
+    jsFiles  = '**/*.js',
+    npmDir   = './',
+    buildDir = './build/';
 
 var js = {
     dir   : jsDir,
@@ -36,7 +36,7 @@ gulp.task('build', function(callback) {
         'test',
         'doc',
         'inject-css', // outputs ./index.js for npm publish
-        'browserify', // outputs to ./browserified/finbars.js for githup.io publish
+        'browserify', // outputs to ./build/finbars.js for githup.io publish
         callback);
 });
 
@@ -51,10 +51,7 @@ gulp.task('default', ['build', 'watch'], function() {
     browserSync.init({
         server: {
             // Serve up our build folder
-            baseDir: srcDir,
-            routes: {
-                "/bower_components": "bower_components"
-            }
+            baseDir: buildDir
         },
         port: 5000
     });
@@ -99,7 +96,7 @@ function test(cb) {
 }
 
 function browserify() {
-    return gulp.src(browDir + 'index.js')
+    return gulp.src(buildDir + 'finbars.browserify.js')
         .pipe($$.browserify({
             //insertGlobals : true,
             debug : true
@@ -109,8 +106,9 @@ function browserify() {
         //.pipe(uglify())
         .on('error', $$.util.log)
         .pipe($$.rename('finbars.js'))
-        .pipe(gulp.dest(browDir));
+        .pipe(gulp.dest(buildDir));
 }
+
 function doc(cb) {
     exec(path.resolve('jsdoc.sh'), function (err, stdout, stderr) {
         console.log(stdout);

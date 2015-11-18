@@ -1,7 +1,6 @@
 .DS_Store
 .idea
-bower_components
-browserified/finbars.js
+build/finbars.js
 doc
 node_modules
 /index.js
