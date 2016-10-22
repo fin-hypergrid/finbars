@@ -40,11 +40,11 @@ function FinBar(options) {
      * @type {Element}
      * @memberOf FinBar.prototype
      */
-    var thumb = document.createElement('div');
+    var thumb = this.thumb = document.createElement('div');
     thumb.classList.add('thumb');
     thumb.onclick = bound.shortStop;
     thumb.onmouseover = bound.onmouseover;
-    this.thumb = thumb;
+    thumb.onmouseout = this._bound.onmouseout;
 
     /**
      * @name bar
@@ -53,22 +53,18 @@ function FinBar(options) {
      *
      * Thus the node tree is typically:
      * * A **content container** element, which contains:
-     *    * The content element(s)
-     *    * This **scrollbar element**, which in turn contains:
-     *        * The **thumb element**
+     *   * The content element(s)
+     *   * This **scrollbar element**, which in turn contains:
+     *     * The **thumb element**
      *
      * @type {Element}
      * @memberOf FinBar.prototype
      */
-    var bar = document.createElement('div');
-
+    var bar = this.bar = document.createElement('div');
     bar.classList.add('finbar-vertical');
-
+    bar.onmousedown = this._bound.onmousedown;
+    if (this.paging) { bar.onclick = bound.onclick; }
     bar.appendChild(thumb);
-    if (this.paging) {
-        bar.onclick = bound.onclick;
-    }
-    this.bar = bar;
 
     options = options || {};
 
@@ -83,27 +79,27 @@ function FinBar(options) {
             var option = options[key];
             switch (key) {
 
-            case 'index':
-                this._index = option;
-                break;
+                case 'index':
+                    this._index = option;
+                    break;
 
-            case 'range':
-                validRange(option);
-                this._min = option.min;
-                this._max = option.max;
-                this.contentSize = option.max - option.min + 1;
-                break;
+                case 'range':
+                    validRange(option);
+                    this._min = option.min;
+                    this._max = option.max;
+                    this.contentSize = option.max - option.min + 1;
+                    break;
 
-            default:
-                if (
-                    key.charAt(0) !== '_' &&
-                    typeof FinBar.prototype[key] !== 'function'
-                ) {
-                    // override prototype defaults for standard ;
-                    // extend with additional properties (for use in onchange event handlers)
-                    this[key] = option;
-                }
-                break;
+                default:
+                    if (
+                        key.charAt(0) !== '_' &&
+                        typeof FinBar.prototype[key] !== 'function'
+                    ) {
+                        // override prototype defaults for standard ;
+                        // extend with additional properties (for use in onchange event handlers)
+                        this[key] = option;
+                    }
+                    break;
 
             }
         }
@@ -565,7 +561,7 @@ FinBar.prototype = {
      * @memberOf FinBar.prototype
      */
     remove: function () {
-        this._removeEvt('mousedown');
+        this.bar.onmousedown = null;
         this._removeEvt('mousemove');
         this._removeEvt('mouseup');
 
@@ -692,20 +688,13 @@ var handlersToBeBound = {
 
     onmouseover: function () {
         this.thumb.classList.add('hover');
-        this.thumb.onmouseout = this._bound.onmouseout;
-        this._addEvt('mousedown');
     },
 
     onmouseout: function () {
-        this._removeEvt('mousedown');
-        this.thumb.onmouseover = this._bound.onmouseover;
         this.thumb.classList.remove('hover');
     },
 
     onmousedown: function (evt) {
-        this._removeEvt('mousedown');
-        this.thumb.onmouseover = this.thumb.onmouseout = null;
-
         var thumbBox = this.thumb.getBoundingClientRect();
         this.pinOffset = evt[this.oh.axis] - thumbBox[this.oh.leading] + this.bar.getBoundingClientRect()[this.oh.leading] + this._thumbMarginLeading;
         document.documentElement.style.cursor = 'default';

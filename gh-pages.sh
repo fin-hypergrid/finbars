@@ -40,9 +40,6 @@ git add . >/dev/null
 git commit -q -m '(See gh-pages.sh on master branch.)'
 git push -ufq origin gh-pages >/dev/null
 
-# copy the demo
-cp ../../$repo/demo.html . >>/dev/null
-
 # back to workspace
 popd >/dev/null
 
@@ -50,5 +47,5 @@ popd >/dev/null
 rm -rf ../temp >/dev/null
 
 echo 'Opening page at http://$org.github.io/$repo/ ...'
-open http://$org.github.io/$repo/
+open http://$org.github.io/$repo/FinBar.html
 echo 'CAVEAT: New pages will not be immediately available so wait a few minutes and refresh.'

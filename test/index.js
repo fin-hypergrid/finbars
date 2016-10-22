@@ -5,7 +5,7 @@
 require('should'); // extends Object with `should`
 var Spy = require('mojo-spy');
 
-var FinBar = require('../src/js/finbars.js');
+var FinBar = require('../src/finbars.js');
 
 function nullfunc() {}
 

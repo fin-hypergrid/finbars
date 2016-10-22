@@ -104,11 +104,12 @@
  *
  * @property {string} [classPrefix] - Adds an additional classname to the bar element's class list. See {@link FinBar#classPrefix|classPrefix} for details.
  *
- * @param {Element|string|null} [cssStylesheetReferenceElement] - Determines where to insert the stylesheet:
- * * `undefined` (or omitted) - inserted as first child of th e`<head>...</head>` element
- * * `null` - inserted as last child of `<head>...</head>` element
- * * If a string, inserted before first element that matches a document query using the string as a selector. (If no matching element, see `undefined` above.)
- * * If an instance of `Element`, will be inserted before that element reference element.
+ * @param {undefined|null|Element|string} [cssStylesheetReferenceElement] - Determines where to insert the stylesheet. Passed to css-injector, the overloads are (from css-injector docs):
+ *
+ * * `undefined` type (or omitted): injects stylesheet at top of `<head>...</head>` element
+ * * `null` value: injects stylesheet at bottom of `<head>...</head>` element
+ * * `Element` type: injects stylesheet immediately before given element, wherever it is found.
+ * * `string` type: injects stylesheet immediately before given first element found that matches the given css selector.
  *
  * In all cases, the built-in stylesheet will not be inserted again if already found in DOM.
  *
@@ -121,6 +122,7 @@
  *   Should you wish to use some other configuration of elements, you must indicate which element is the container the scrollbar is controlling. For example, if you wish to position your scrollbar outside the content area rather than within it.
  *
  * @property {Element} [content] - This option is used to bind the scroll bar to some real content for the purpose of scrolling. Giving this option while omitting the `onchange` option signals the constructor to make this binding for you. When the API sees this configuration, it makes the following settings for you (so don't try to set any of these yourself):
+ *
  *   * `this.min` = 0
  *   * `this.max` = the content size - the container size - 1
  *   * `this.increment` = the container size

@@ -1,1 +1,0 @@
-window.FinBar = require('../index');
