@@ -1,7 +1,7 @@
 {
   "name": "finbars",
   "version": "1.5.3",
-  "main": "src/index.js",
+  "main": "dist/common.js",
   "description": "Styleable scrollbars for real or virtual content",
   "repository": {
     "type": "git",
