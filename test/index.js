@@ -44,12 +44,14 @@ global.document = {
     }
 };
 global.window = {
+    // don't break cssInjector() in unit tests
+    finbarsIgnoreStylesheets: true,
     getComputedStyle: function () {
         return {
             marginTop: 0,
             marginBottom: 0,
             marginLeft: 0,
-            marginRight: 0,
+            marginRight: 0
         };
     }
 };
@@ -63,7 +65,8 @@ describe('require() returns an object that', function() {
         beforeEach(function() {
             options = {
                 min: 33,
-                max: 55
+                max: 55,
+                mouseWheelScrollMultiplier: 0.5
             };
             finbar = new FinBar(options);
         });
@@ -81,6 +84,9 @@ describe('require() returns an object that', function() {
         });
         it('has a member `thumb` of type Element', function() {
             (finbar.thumb instanceof Element).should.be.true();
+        });
+        it('has a member `mouseWheelScrollMultiplier`', function() {
+            finbar.mouseWheelScrollMultiplier.should.equal(options.mouseWheelScrollMultiplier);
         });
         describe('has a member `index`', function() {
             it('is a getter', function() {

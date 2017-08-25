@@ -105,7 +105,10 @@ function FinBar(options) {
         }
     }
 
-    cssInjector(cssFinBars, 'finbar-base', options.cssStylesheetReferenceElement);
+    // don't inject stylesheets during unit tests
+    if (window && !window.finbarsIgnoreStylesheets) {
+        cssInjector(cssFinBars, 'finbar-base', options.cssStylesheetReferenceElement);
+    }
 }
 
 FinBar.prototype = {
@@ -229,6 +232,16 @@ FinBar.prototype = {
      * @memberOf FinBar.prototype
      */
     increment: 1,
+
+    /**
+     * @name mouseWheelScrollMultiplier
+     * @summary Multiplier applied to original scroll offset returned in mousewheel scrolling event.
+     * @desc The scroll speed produced by mousewheel events may be customized passing a custom multipler. The scrolling speed will increase for multipliers above 1, decrease for a multiplier between 0 and 1, and 0 will disable mousewheel scrolling. A modulo will be applied for negative values. Defaults to 1.
+     *
+     * @type {number}
+     * @memberOf FinBar.prototype
+     */
+    mouseWheelScrollMultiplier: 1,
 
     /**
      * @name barStyles
@@ -660,7 +673,12 @@ var handlersToBeBound = {
     },
 
     onwheel: function (evt) {
-        this.index += evt[this.deltaProp];
+        var offset = evt[this.deltaProp] * this.mouseWheelScrollMultiplier;
+
+        // round up for positive values or down for negative ones
+        offset = (offset > 0) ? Math.ceil(offset) : Math.floor(offset);
+
+        this.index += offset;
         evt.stopPropagation();
         evt.preventDefault();
     },
