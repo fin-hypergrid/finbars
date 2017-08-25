@@ -244,6 +244,15 @@ FinBar.prototype = {
     mouseWheelScrollMultiplier: 1,
 
     /**
+     * @summary Set the mouse wheel scroll speed
+     * @param multiplier - The new mouseWheelScrollMultiplier value
+     * @memberOf FinBar.prototype
+     */
+    setMouseWheelScrollMultiplier: function (multiplier) {
+        this.mouseWheelScrollMultiplier = multiplier;
+    },
+
+    /**
      * @name barStyles
      * @summary Scrollbar styles to be applied by {@link FinBar#resize|resize()}.
      * @desc Set by the constructor. See the similarly named property in the {@link finbarOptions} object.
