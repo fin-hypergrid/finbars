@@ -33,6 +33,7 @@ function InitFinbarsWithVirtualContent(container, contents) {
 
     var horzBar = new FinBar({
         onchange: renderVirtualContent,
+        mouseWheelSpeedMultipler: 1,
         range: { min: 1001, max: 99999 },
         increment: 8,
         orientation: 'horizontal',
@@ -43,6 +44,7 @@ function InitFinbarsWithVirtualContent(container, contents) {
 
     var vertBar = new FinBar({
         onchange: renderVirtualContent,
+        mouseWheelSpeedMultipler: 1,
         range: { min: 1001, max: 99999 },
         increment: 8,
         orientation: 'vertical',
