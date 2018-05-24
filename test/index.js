@@ -18,6 +18,12 @@ global.Element.prototype = {
     style: {},
     appendChild: nullfunc,
     insertBefore: nullfunc,
+    get firstChild() { return this[Object.keys(this)[0]]; },
+    querySelector: function(selector) {
+        return Object.keys(this).find(function(key) {
+            return /^#/.test(selector) && this.id === selector.substr(1);
+        }) || new Element;
+    },
     getBoundingClientRect: function () {
         return {
             top: 0,

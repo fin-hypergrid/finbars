@@ -27,7 +27,7 @@ function FinBar(options) {
 
     // make bound versions of all the mouse event handler
     var bound = this._bound = {};
-    Object.keys(handlersToBeBound).forEach(function(key) {
+    Object.keys(handlersToBeBound).forEach(function (key) {
         bound[key] = handlersToBeBound[key].bind(this);
     }, this);
 
@@ -74,7 +74,7 @@ function FinBar(options) {
     this._max = 100;
 
     // options
-    Object.keys(options).forEach(function(key) {
+    Object.keys(options).forEach(function (key) {
         var option = options[key];
         if (option !== undefined) {
             switch (key) {
