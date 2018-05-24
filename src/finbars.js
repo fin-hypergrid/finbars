@@ -27,9 +27,9 @@ function FinBar(options) {
 
     // make bound versions of all the mouse event handler
     var bound = this._bound = {};
-    for (key in handlersToBeBound) {
+    Object.keys(handlersToBeBound).forEach(function(key) {
         bound[key] = handlersToBeBound[key].bind(this);
-    }
+    }, this);
 
     /**
      * @name thumb
@@ -74,9 +74,9 @@ function FinBar(options) {
     this._max = 100;
 
     // options
-    for (var key in options) {
-        if (options.hasOwnProperty(key)) {
-            var option = options[key];
+    Object.keys(options).forEach(function(key) {
+        var option = options[key];
+        if (option !== undefined) {
             switch (key) {
 
                 case 'index':
@@ -103,7 +103,7 @@ function FinBar(options) {
 
             }
         }
-    }
+    }, this);
 
     cssInjector(cssFinBars, 'finbar-base', options.cssStylesheetReferenceElement);
 }
@@ -229,6 +229,27 @@ FinBar.prototype = {
      * @memberOf FinBar.prototype
      */
     increment: 1,
+
+    /**
+     * Default value of multiplier for `WheelEvent#deltaX` (horizontal scrolling delta).
+     * @default
+     * @memberOf FinBar.prototype
+     */
+    deltaXFactor: 1,
+
+    /**
+     * Default value of multiplier for `WheelEvent#deltaY` (vertical scrolling delta).
+     * @default
+     * @memberOf FinBar.prototype
+     */
+    deltaYFactor: 1,
+
+    /**
+     * Default value of multiplier for `WheelEvent#deltaZ` (delpth scrolling delta).
+     * @default
+     * @memberOf FinBar.prototype
+     */
+    deltaZFactor: 1,
 
     /**
      * @name barStyles
@@ -660,7 +681,7 @@ var handlersToBeBound = {
     },
 
     onwheel: function (evt) {
-        this.index += evt[this.deltaProp];
+        this.index += evt[this.deltaProp] * this[this.deltaProp + 'Factor'];
         evt.stopPropagation();
         evt.preventDefault();
     },
