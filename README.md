@@ -28,10 +28,10 @@ const FinBar = require('finbars');
 ### Runtime import
 As an alternative to using the npm module, the client may request a versioned build file that sets the global `window.FinBar`:
 ```html
-<script src="https://unpkg.com/finbars@1.6/umd/finbars.js"></script>
-<script src="https://unpkg.com/finbars@1.6/umd/finbars.min.js"></script>
+<script src="https://unpkg.com/finbars@2.0/umd/finbars.js"></script>
+<script src="https://unpkg.com/finbars@2.0/umd/finbars.min.js"></script>
 ```
-Any [SEMVER](//semver.org) string can be used. `1.6` in the above means load the latest of the 1.6.* range. See the [npm semver calculator](//semver.npmjs.com) and npm’s [semantic versioning](https://docs.npmjs.com/misc/semver) page.
+Any [SEMVER](//semver.org) string can be used. `2.0` in the above means load the latest of the 2.0.* range. See the [npm semver calculator](//semver.npmjs.com) and npm’s [semantic versioning](https://docs.npmjs.com/misc/semver) page.
 
 ## Synopsis
 
@@ -109,18 +109,26 @@ The unit test included currently (test/index.js) is rudimentary and needs to be 
 
 An HTML file is included as an example. I user-tested this example file on:
 
-* Mac OS Yosemite (10.10.5)
-    * Chrome (45.0.2454.85)
-    * Safari (8.0.8)
-    * Firefox (40.0.3)
+* Mac OS High Sierra (10.13.6)
+    * Chrome (70.0.3538.77)
+    * Safari (12.0 - 13606.2.11)
+    * Opera (56.0.3051.52)
+    * Firefox (63.0)
 * Windows 7 (SP1)
-    * Chrome (45.0.2454.85 m)
-    * Firefox (40.0.3)
-    * IE 11 (11.0.9600.17914, emulation mode = Edge)
-    * IE 10 (IE 11, emulation mode = 10)
+    * Chrome (67.0.3396.87)
+    * Firefox (52.8.0)
+    * IE 11 (11.0.9600.19155CO)
+* Windows 10
+    * Chrome (70.0.3538.77)
+    * Opera (56.0.3051.70)
+    * Firefox (63.0)
+    * IE 11 (11.345.17134.0)
+    * Edge (42.17134.1.0)
 
 ## Version History
-* `1.6.3`
+* `2.0.0` (10/28/2018)
+   * This major version update applies platform/browser normalization to `deltaXFactor`, `deltaYFactor`, and `deltaZFactor`, a breaking behavioral change for any app that was previously applying its own normalization factoring to this prop values. See [`FinBar.normals`](https://fin-hypergrid.github.io/finbars/FinBar.html#.normals) and [`normal`](https://fin-hypergrid.github.io/finbars/FinBar.html#normal).
+* `1.6.3` (10/28/2018)
    * Remove stylesheet requirement that `.bar` and `.thumb` classes must maintain `position: abolute` by setting/overriding it on the `style` attribute as the objects are created in code.
 * `1.6.2` (10/8/2018)
    * Keep .hover class on thumb throughout drag.

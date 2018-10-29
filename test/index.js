@@ -58,7 +58,8 @@ global.window = {
             marginLeft: 0,
             marginRight: 0,
         };
-    }
+    },
+    navigator: { platform: '', userAgent: '' }
 };
 
 describe('require() returns an object that', function() {

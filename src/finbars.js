@@ -67,7 +67,7 @@ function FinBar(options) {
      * @memberOf FinBar.prototype
      */
     var bar = this.bar = document.createElement('div');
-    bar.classList.add('finbar-vertical');
+     bar.classList.add('finbar-vertical');
     bar.setAttribute('style', BAR_STYLE);
     bar.onmousedown = this._bound.onmousedown;
     if (this.paging) { bar.onclick = bound.onclick; }
@@ -79,6 +79,17 @@ function FinBar(options) {
     this.orientation = 'vertical';
     this._min = this._index = 0;
     this._max = 100;
+
+    /**
+     * Wheel metric normalization, applied equally to all three axes.
+     *
+     * This value is overridden with a platform- and browser-specific wheel factor when available in {@link FinBar.normals}.
+     *
+     * To suppress, delete `FinBar.normals` before instantiation or override this instance variable (with `1.0`) after instantiation.
+     * @type {number}
+     * @memberOf FinBar.prototype
+     */
+    this.normal = getNormal() || 1.0;
 
     // options
     Object.keys(options).forEach(function (key) {
@@ -688,7 +699,7 @@ var handlersToBeBound = {
     },
 
     onwheel: function (evt) {
-        this.index += evt[this.deltaProp] * this[this.deltaProp + 'Factor'];
+        this.index += evt[this.deltaProp] * this[this.deltaProp + 'Factor'] * this.normal;
         evt.stopPropagation();
         evt.preventDefault();
     },
@@ -776,6 +787,47 @@ var handlersToBeBound = {
         evt.preventDefault();
     }
 };
+
+/**
+ * Table of wheel normals to webkit.
+ *
+ * This object is a dictionary of platform dictionaries, keyed by:
+ * * `mac` — macOS
+ * * `win` — Window
+ *
+ * Each platform dictionary is keyed by:
+ * * `webkit` — Chrome, Opera, Safari
+ * * `moz` — Firefox
+ * * `ms` — IE 11 _(Windows only)_
+ * * `edge` — Edge _(Windows only)_
+ *
+ * @todo add `linux` platform
+ * @type {object}
+ */
+FinBar.normals = {
+    mac: {
+        webkit: 1.0,
+        moz: 35
+    },
+    win: {
+        webkit: 2.6,
+        moz: 85,
+        ms: 2.9,
+        edge: 2
+    }
+};
+
+function getNormal() {
+    var nav = window.navigator, ua = nav.userAgent;
+    var platform = nav.platform.substr(0, 3).toLowerCase();
+    var browser = /Edge/.test(ua) ? 'edge' :
+        /Opera|OPR|Chrome|Safari/.test(ua) ? 'webkit' :
+            /Firefox/.test(ua) ? 'moz' :
+                document.documentMode ? 'ms' : // internet explorer
+                    undefined;
+    var platformDictionary = FinBar.normals[platform] || {};
+    return platformDictionary[browser];
+}
 
 var orientationHashes = {
     vertical: {

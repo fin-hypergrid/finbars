@@ -1,6 +1,6 @@
 {
   "name": "finbars",
-  "version": "1.6.3",
+  "version": "2.0.0",
   "main": "index.js",
   "description": "Styleable scrollbars for real or virtual content",
   "repository": {
