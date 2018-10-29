@@ -728,6 +728,12 @@ var handlersToBeBound = {
     },
 
     onmousemove: function (evt) {
+        if (!(evt.buttons & 1)) {
+            // mouse button may have been released without `onmouseup` triggering (see
+            window.dispatchEvent(new MouseEvent('mouseup', evt));
+            return;
+        }
+
         var scaled = Math.min(this._thumbMax, Math.max(0, evt[this.oh.axis] - this.pinOffset));
         var idx = scaled / this._thumbMax * (this._max - this._min) + this._min;
 

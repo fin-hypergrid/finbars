@@ -9,12 +9,34 @@ Try the [demo](https://fin-hypergrid.github.io/finbars/demo.html).
 
 Detailed API docs can be found [here](http://fin-hypergrid.github.io/finbars/FinBar.html).
 
+## Import
+
+Use one or the other:
+
+### CommonJS npm module
+For consumption by bundler on build machine.
+
+_From Bash prompt:_
+```bash
+npm install --save-prod finbars
+```
+_From within a code module:_
+```javascript
+const FinBar = require('finbars');
+```
+
+### Runtime import
+As an alternative to using the npm module, the client may request a versioned build file that sets the global `window.FinBar`:
+```html
+<script src="https://unpkg.com/finbars@1.6/umd/finbars.js"></script>
+<script src="https://unpkg.com/finbars@1.6/umd/finbars.min.js"></script>
+```
+Any [SEMVER](//semver.org) string can be used. `1.6` in the above means load the latest of the 1.6.* range. See the [npm semver calculator](//semver.npmjs.com) and npm’s [semantic versioning](https://docs.npmjs.com/misc/semver) page.
+
 ## Synopsis
 
 The following sets up a vertical scrollbar to scroll "real" content with the default handler, `vertbar.scrollRealContent`, which is wired up for you automatically when you give `content` option but no `onchange` option).
 ```javascript
-var FinBar = require('finbars');
-
 var container = document.getElementsByTagName('div')[0],
     content = container.firstChild,
     vertBar = new FinBar({ orientation: 'vertical', content: content });
@@ -96,3 +118,9 @@ An HTML file is included as an example. I user-tested this example file on:
     * Firefox (40.0.3)
     * IE 11 (11.0.9600.17914, emulation mode = Edge)
     * IE 10 (IE 11, emulation mode = 10)
+
+## Version History
+* `1.6.1` (10/8/2018)
+   * Capture off-grid mouseup during scrollbar thumb drag.
+* `1.6.0` (5/24/2018)
+   * Add `deltaXFactor`, `deltaYFactor`, and `deltaZFactor` properties to fine tune wheel metrics.

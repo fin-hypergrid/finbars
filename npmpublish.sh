@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 
-cd src
+gulp build
+
+mkdir umd
+cp build/finbars.* umd
+
+cp src/index.js .
 
 rm npm-debug.log > /dev/null
 
-cp ../README.md .
-cp ../package.json .
-cp ../LICENSE .
-
 npm publish
 
-rm README.md package.json LICENSE
-
-cd ..
+rm index.js
+rm -fdr umd

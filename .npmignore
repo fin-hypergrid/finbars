@@ -1,0 +1,10 @@
+/build
+/doc
+/jsdoc-template
+/src
+/test
+.*
+/demo.html
+/*.sh
+/gulpfile.js
+/package-lock.json

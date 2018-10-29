@@ -5,3 +5,5 @@
 /doc
 /node_modules
 /src/index.js
+/jsdoc-template
+/package-lock.json
