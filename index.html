@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>finbars test harness</title>
+
+    <link rel="stylesheet" type="text/css" href="css/example.css"/>
+
+    <script src="finbars.js"></script>
+    <script src="js/example.js"></script>
+    <script src="js/index.js"></script>
+</head>
+<body>
+
+    <div class="block">
+        <h1>finbars with real content</h1>
+        <fieldset>
+            <legend>Listening for</legend>
+            <ol class="real test-panel"></ol>
+        </fieldset>
+        <div id="real" class="container finbars">
+            <!-- <canvas width="400" height="400"></canvas> -->
+            <img style="position:absolute" height="1024" width="687" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg/687px-Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg" />
+        </div>
+        <div class="resizer"></div>
+        &nbsp;
+    </div>
+
+    <div class="block">
+        <h1>finbars with virtual content</h1>
+        <fieldset>
+            <legend>Listening for</legend>
+            <ol class="virtual test-panel"></ol>
+        </fieldset>
+        <div id="virtual" class="container">
+            <!-- <canvas width="400" height="400"></canvas> -->
+            <div class="content"></div>
+            <div class="content"></div>
+        </div>
+        &nbsp;
+    </div>
+
+    <div class="block" style="vertical-align: bottom">
+        <h1>system scrollbars</h1>
+        <div class="container scrollable">
+            <!-- <canvas width="400" height="400"></canvas> -->
+            <img height="1024" width="687" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg/687px-Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg" />
+        </div>
+        &nbsp;
+    </div>
+
+</body>
+</html>

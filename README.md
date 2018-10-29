@@ -1,13 +1,13 @@
 # FinBars
 Styleable scrollbars for real or virtual content
 
-Try the [demo](https://fin-hypergrid.github.io/finbars/demo.html).
+Try the [demo](https://fin-hypergrid.github.io/finbars).
 
 \[See the note [Regarding submodules](https://github.com/fin-hypergrid/rectangular#regarding-submodules) for important information on cloning this repo or re-purposing its build template.\]
 
 ## API documentation
 
-Detailed API docs can be found [here](http://fin-hypergrid.github.io/finbars/FinBar.html).
+Detailed API docs can be found [here](http://fin-hypergrid.github.io/finbars/doc/FinBar.html).
 
 ## Import
 

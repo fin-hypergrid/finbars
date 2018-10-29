@@ -13,7 +13,7 @@ var runSequence = require('run-sequence'),
 var name     = 'finbars',
     srcDir   = './src/',
     testDir  = './test/',
-    buildDir = './build/';
+    buildDir = './umd/';
 
 //  //  //  //  //  //  //  //  //  //  //  //
 
@@ -106,7 +106,7 @@ function browserify() {
         .on('error', $$.util.log)
 
         .pipe($$.rename(name + '.js'))
-        .pipe(gulp.dest(buildDir)); // outputs to ./build/list-dragon.js for githup.io publish
+        .pipe(gulp.dest(buildDir));
 }
 
 function browserifyMin() {
@@ -129,8 +129,8 @@ function browserSyncLaunchServer() {
     browserSync.init({
         server: {
             // Serve up our build folder
-            baseDir: buildDir,
-            index: "demo.html"
+            baseDir: './',
+            index: "index.html"
         },
         port: 5005
     });

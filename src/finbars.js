@@ -128,7 +128,7 @@ function FinBar(options) {
 
 FinBar.prototype = {
 
-    /**
+    constructor: FinBar,    /**
      * @summary The scrollbar orientation.
      * @desc Set by the constructor to either `'vertical'` or `'horizontal'`. See the similarly named property in the {@link finbarOptions} object.
      *
@@ -818,15 +818,17 @@ FinBar.normals = {
 };
 
 function getNormal() {
-    var nav = window.navigator, ua = nav.userAgent;
-    var platform = nav.platform.substr(0, 3).toLowerCase();
-    var browser = /Edge/.test(ua) ? 'edge' :
-        /Opera|OPR|Chrome|Safari/.test(ua) ? 'webkit' :
-            /Firefox/.test(ua) ? 'moz' :
-                document.documentMode ? 'ms' : // internet explorer
-                    undefined;
-    var platformDictionary = FinBar.normals[platform] || {};
-    return platformDictionary[browser];
+    if (FinBar.normals) {
+        var nav = window.navigator, ua = nav.userAgent;
+        var platform = nav.platform.substr(0, 3).toLowerCase();
+        var browser = /Edge/.test(ua) ? 'edge' :
+            /Opera|OPR|Chrome|Safari/.test(ua) ? 'webkit' :
+                /Firefox/.test(ua) ? 'moz' :
+                    document.documentMode ? 'ms' : // internet explorer
+                        undefined;
+        var platformDictionary = FinBar.normals[platform] || {};
+        return platformDictionary[browser];
+    }
 }
 
 var orientationHashes = {

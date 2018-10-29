@@ -1,9 +1,7 @@
 .DS_Store
 /.idea
-/build/finbars.js
-/build/finbars.min.js
 /doc
+/umd
 /node_modules
 /src/index.js
-/jsdoc-template
 /package-lock.json
