@@ -24,7 +24,7 @@ global.Element.prototype = {
             return /^#/.test(selector) && this.id === selector.substr(1);
         }) || new Element;
     },
-    getBoundingClientRect: function () {
+    getBoundingClientRect: function() {
         return {
             top: 0,
             bottom: 0,
@@ -33,7 +33,8 @@ global.Element.prototype = {
             width: 10,
             height: 10
         }
-    }
+    },
+    setAttribute: function() {}
 };
 global.document = {
     createElement: function() {

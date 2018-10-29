@@ -4,6 +4,11 @@
 
 var cssInjector = require('css-injector');
 
+// Following is the sole style requirement for bar and thumb elements.
+// Maintained in code so not dependent being in stylesheet.
+var BAR_STYLE = 'position: absolute;';
+var THUMB_STYLE = 'position: absolute;';
+
 /**
  * @constructor FinBar
  * @summary Create a scrollbar object.
@@ -42,6 +47,7 @@ function FinBar(options) {
      */
     var thumb = this.thumb = document.createElement('div');
     thumb.classList.add('thumb');
+    thumb.setAttribute('style', THUMB_STYLE);
     thumb.onclick = bound.shortStop;
     thumb.onmouseover = bound.onmouseover;
     thumb.onmouseout = this._bound.onmouseout;
@@ -62,6 +68,7 @@ function FinBar(options) {
      */
     var bar = this.bar = document.createElement('div');
     bar.classList.add('finbar-vertical');
+    bar.setAttribute('style', BAR_STYLE);
     bar.onmousedown = this._bound.onmousedown;
     if (this.paging) { bar.onclick = bound.onclick; }
     bar.appendChild(thumb);
@@ -164,9 +171,9 @@ FinBar.prototype = {
 
         this.bar.className = this.bar.className.replace(/(vertical|horizontal)/g, orientation);
 
-        if (this.bar.style.cssText || this.thumb.style.cssText) {
-            this.bar.removeAttribute('style');
-            this.thumb.removeAttribute('style');
+        if (this.bar.style.cssText !== BAR_STYLE || this.thumb.style.cssText !== THUMB_STYLE) {
+            this.bar.setAttribute('style', BAR_STYLE);
+            this.thumb.setAttribute('style', THUMB_STYLE);
             this.resize();
         }
     },
@@ -299,7 +306,7 @@ FinBar.prototype = {
                 oh = this.oh;
 
             // Before applying new styles, revert all styles to values inherited from stylesheets
-            bar.removeAttribute('style');
+            bar.setAttribute('style', BAR_STYLE);
 
             keys.forEach(function (key) {
                 var val = styles[key];

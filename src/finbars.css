@@ -1,11 +1,9 @@
 /* scrollbar style - typically transparent */
 div.finbar-vertical, div.finbar-horizontal {
-    position: absolute; /* DO NOT TOUCH - this is the only required style for scrollbars */
     margin: 3px;
 }
 /* thumb style */
 div.finbar-vertical > .thumb, div.finbar-horizontal > .thumb {
-    position: absolute; /* DO NOT TOUCH - this is the only required style for thumbs */
     background-color: lightgrey;
     -webkit-box-shadow: 0 0 1px black;
     -moz-box-shadow: 0 0 1px black;

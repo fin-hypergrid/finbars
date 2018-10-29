@@ -1,6 +1,6 @@
 {
   "name": "finbars",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "main": "index.js",
   "description": "Styleable scrollbars for real or virtual content",
   "repository": {
@@ -10,7 +10,7 @@
   "author": "JEiten",
   "license": "MIT",
   "dependencies": {
-    "css-injector": "^1.0.2"
+    "css-injector": "^1.1.0"
   },
   "devDependencies": {
     "browser-sync": "^2.9.6",
