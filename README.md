@@ -120,6 +120,8 @@ An HTML file is included as an example. I user-tested this example file on:
     * IE 10 (IE 11, emulation mode = 10)
 
 ## Version History
+* `1.6.2` (10/8/2018)
+   * Keep .hover class on thumb throughout drag.
 * `1.6.1` (10/8/2018)
    * Capture off-grid mouseup during scrollbar thumb drag.
 * `1.6.0` (5/24/2018)

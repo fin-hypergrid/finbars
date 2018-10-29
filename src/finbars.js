@@ -586,7 +586,7 @@ FinBar.prototype = {
         this._removeEvt('mousemove');
         this._removeEvt('mouseup');
 
-        (this.container || this.bar.parentElement)._removeEvt('wheel', this._bound.onwheel);
+        (this.container || this.bar.parentElement)._removeEvt('wheel');
 
         this.bar.onclick =
             this.thumb.onclick =
@@ -712,13 +712,17 @@ var handlersToBeBound = {
     },
 
     onmouseout: function () {
-        this.thumb.classList.remove('hover');
+        if (!this.dragging) {
+            this.thumb.classList.remove('hover');
+        }
     },
 
     onmousedown: function (evt) {
         var thumbBox = this.thumb.getBoundingClientRect();
         this.pinOffset = evt[this.oh.axis] - thumbBox[this.oh.leading] + this.bar.getBoundingClientRect()[this.oh.leading] + this._thumbMarginLeading;
         document.documentElement.style.cursor = 'default';
+
+        this.dragging = true;
 
         this._addEvt('mousemove');
         this._addEvt('mouseup');
@@ -746,6 +750,8 @@ var handlersToBeBound = {
     onmouseup: function (evt) {
         this._removeEvt('mousemove');
         this._removeEvt('mouseup');
+
+        this.dragging = false;
 
         document.documentElement.style.cursor = 'auto';
 
