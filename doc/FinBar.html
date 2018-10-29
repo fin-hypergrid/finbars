@@ -1,0 +1,2314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: FinBar</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="FinBar.html">FinBar</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+<div id="main">
+
+    <h1 class="page-title">Class: FinBar</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        FinBar
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    <h4 class="name" id="FinBar"><span class="type-signature"></span>new FinBar<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+    <p class="summary"><p>Create a scrollbar object.</p></p>
+    
+
+
+
+<div class="description">
+    <p>Creating a scrollbar is a three-step process:</p>
+<ol>
+<li>Instantiate the scrollbar object by calling this constructor function. Upon instantiation, the DOM element for the scrollbar (with a single child element for the scrollbar &quot;thumb&quot;) is created but is not insert it into the DOM.</li>
+<li>After instantiation, it is the caller's responsibility to insert the scrollbar, <a href="FinBar.html#bar"><code>this.bar</code></a>, into the DOM.</li>
+<li>After insertion, the caller must call <a href="FinBar.html#resize"><code>resize()</code></a> at least once to size and position the scrollbar and its thumb. After that, <code>resize()</code> should also be called repeatedly on resize events (as the content element is being resized).</li>
+</ol>
+<p>Suggested configurations:</p>
+<ul>
+<li><em><strong>Unbound</strong></em><br/>
+The scrollbar serves merely as a simple range (slider) control. Omit both <code>options.onchange</code> and <code>options.content</code>.</li>
+<li><em><strong>Bound to virtual content element</strong></em><br/>
+Virtual content is projected into the element using a custom event handler supplied by the programmer in <code>options.onchange</code>. A typical use case would be to handle scrolling of the virtual content. Other use cases include data transformations, graphics transformations, <em>etc.</em></li>
+<li><em><strong>Bound to real content</strong></em><br/>
+Set <code>options.content</code> to the &quot;real&quot; content element but omit <code>options.onchange</code>. This will cause the scrollbar to use the built-in event handler (<code>this.scrollRealContent</code>) which implements smooth scrolling of the content element within the container.</li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#finbarOptions">finbarOptions</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
+
+            <td class="description last"><p>Options object. See the type definition for member details.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id=".normals"><span class="type-signature">(static) </span>normals<span class="type-signature"> :object</span></h4>
+
+
+
+
+<div class="description">
+    <p>Table of wheel normals to webkit.</p>
+<p>This object is a dictionary of platform dictionaries, keyed by:</p>
+<ul>
+<li><code>mac</code> — macOS</li>
+<li><code>win</code> — Window</li>
+</ul>
+<p>Each platform dictionary is keyed by:</p>
+<ul>
+<li><code>webkit</code> — Chrome, Opera, Safari</li>
+<li><code>moz</code> — Firefox</li>
+<li><code>ms</code> — IE 11 <em>(Windows only)</em></li>
+<li><code>edge</code> — Edge <em>(Windows only)</em></li>
+</ul>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-todo">To Do:</dt>
+    <dd class="tag-todo">
+        <ul>
+            <li>add `linux` platform</li>
+        </ul>
+    </dd>
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="bar"><span class="type-signature"></span>bar<span class="type-signature"> :Element</span></h4>
+
+
+<p class="summary"><p>The generated scrollbar element.</p></p>
+
+
+
+<div class="description">
+    <p>The caller inserts this element into the DOM (typically into the content container) and then calls its <a href="FinBar.html#resize"><code>resize()</code></a> method.</p>
+<p>Thus the node tree is typically:</p>
+<ul>
+<li>A <strong>content container</strong> element, which contains:<ul>
+<li>The content element(s)</li>
+<li>This <strong>scrollbar element</strong>, which in turn contains:<ul>
+<li>The <strong>thumb element</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Element</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="barStyles"><span class="type-signature"></span>barStyles<span class="type-signature"> :<a href="global.html#finbarStyles">finbarStyles</a>|null</span></h4>
+
+
+<p class="summary"><p>Scrollbar styles to be applied by <a href="FinBar.html#resize"><code>resize()</code></a>.</p></p>
+
+
+
+<div class="description">
+    <p>Set by the constructor. See the similarly named property in the <a href="global.html#finbarOptions"><code>finbarOptions</code></a> object.</p>
+<p>This is a value to be assigned to <code>styles</code> on each call to <a href="FinBar.html#resize"><code>resize()</code></a>. That is, a hash of values to be copied to the scrollbar element's style object on resize; or <code>null</code> for none.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="global.html#finbarStyles">finbarStyles</a></span>
+|
+
+<span class="param-type">null</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="FinBar.html#style"><code>style</code></a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="classPrefix"><span class="type-signature"></span>classPrefix<span class="type-signature"> :string</span></h4>
+
+
+<p class="summary"><p>Add a CSS class name to the bar element's class list.</p></p>
+
+
+
+<div class="description">
+    <p>Set by the constructor. See the similarly named property in the <a href="global.html#finbarOptions"><code>finbarOptions</code></a> object.</p>
+<p>The bar element's class list will always include <code>finbar-vertical</code> (or <code>finbar-horizontal</code> based on the current orientation). Whenever this property is set to some value, first the old prefix+orientation is removed from the bar element's class list; then the new prefix+orientation is added to the bar element's class list. This property causes <em>an additional</em> class name to be added to the bar element's class list. Therefore, this property will only add at most one additional class name to the list.</p>
+<p>To remove <em>classname-orientation</em> from the bar element's class list, set this property to a falsy value, such as <code>null</code>.</p>
+<blockquote>
+<p>NOTE: You only need to specify an additional class name when you need to have mulltiple different styles of scrollbars on the same page. If this is not a requirement, then you don't need to make a new class; you would just create some additional rules using the same selectors in the built-in stylesheet (../css/finbars.css):
+<em><code>div.finbar-vertical</code> (or <code>div.finbar-horizontal</code>) for the scrollbar
+</em><code>div.finbar-vertical &gt; div</code> (or <code>div.finbar-horizontal &gt; div</code>) for the &quot;thumb.&quot;</p>
+</blockquote>
+<p>Of course, your rules should come after the built-ins.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">string</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="deltaProp"><span class="type-signature"></span>deltaProp<span class="type-signature"> :object|null</span></h4>
+
+
+<p class="summary"><p>The name of the <code>WheelEvent</code> property this scrollbar should listen to.</p></p>
+
+
+
+<div class="description">
+    <p>Set by the constructor. See the similarly named property in the <a href="global.html#finbarOptions"><code>finbarOptions</code></a> object.</p>
+<p>Useful values are <code>'deltaX'</code>, <code>'deltaY'</code>, or <code>'deltaZ'</code>. A value of <code>null</code> means to ignore mouse wheel events entirely.</p>
+<p>The mouse wheel is one-dimensional and only emits events with <code>deltaY</code> data. This property is provided so that you can override the default of <code>'deltaX'</code> with a value of <code>'deltaY'</code> on your horizontal scrollbar primarily to accommodate certain &quot;panoramic&quot; interface designs where the mouse wheel should control horizontal rather than vertical scrolling. Just give <code>{ deltaProp: 'deltaY' }</code> in your horizontal scrollbar instantiation.</p>
+<p>Caveat: Note that a 2-finger drag on an Apple trackpad emits events with <em>both</em> <code>deltaX</code> and <code>deltaY</code> data so you might want to delay making the above adjustment until you can determine that you are getting Y data only with no X data at all (which is a sure bet you on a mouse wheel rather than a trackpad).</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">object</span>
+|
+
+<span class="param-type">null</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="deltaXFactor"><span class="type-signature"></span>deltaXFactor<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Default value of multiplier for <code>WheelEvent#deltaX</code> (horizontal scrolling delta).</p>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>1</li>
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="deltaYFactor"><span class="type-signature"></span>deltaYFactor<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Default value of multiplier for <code>WheelEvent#deltaY</code> (vertical scrolling delta).</p>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>1</li>
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="deltaZFactor"><span class="type-signature"></span>deltaZFactor<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Default value of multiplier for <code>WheelEvent#deltaZ</code> (delpth scrolling delta).</p>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>1</li>
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="increment"><span class="type-signature"></span>increment<span class="type-signature"> :number</span></h4>
+
+
+<p class="summary"><p>Number of scrollbar index units representing a pageful. Used exclusively for paging up and down and for setting thumb size relative to content size.</p></p>
+
+
+
+<div class="description">
+    <p>Set by the constructor. See the similarly named property in the <a href="global.html#finbarOptions"><code>finbarOptions</code></a> object.</p>
+<p>Can also be given as a parameter to the <a href="FinBar.html#resize"><code>resize</code></a> method, which is pertinent because content area size changes affect the definition of a &quot;pageful.&quot; However, you only need to do this if this value is being used. It not used when:</p>
+<ul>
+<li>you define <code>paging.up</code> and <code>paging.down</code></li>
+<li>your scrollbar is using <code>scrollRealContent</code></li>
+</ul>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">number</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="index"><span class="type-signature"></span>index<span class="type-signature"> :number</span></h4>
+
+
+<p class="summary"><p>Index value of the scrollbar.</p></p>
+
+
+
+<div class="description">
+    <p>This is the position of the scroll thumb.</p>
+<p>Setting this value clamps it to <code>min</code>..<code>max</code>, scroll the content, and moves thumb.</p>
+<p>Getting this value returns the current index. The returned value will be in the range <code>min</code>..<code>max</code>. It is intentionally not rounded.</p>
+<p>Use this value as an alternative to (or in addition to) using the <a href="FinBar.html#onchange"><code>onchange</code></a> callback function.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">number</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><code>_setScroll</code></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="oh"><span class="type-signature">(readonly) </span>oh<span class="type-signature"> :<a href="global.html#orientationHashType">orientationHashType</a></span></h4>
+
+
+<p class="summary"><p><u>O</u>rientation <u>h</u>ash for this scrollbar.</p></p>
+
+
+
+<div class="description">
+    <p>Set by the <code>orientation</code> setter to either the vertical or the horizontal orientation hash. The property should always be synchronized with <code>orientation</code>; do not update directly!</p>
+<p>This object is used internally to access scrollbars' DOM element properties in a generalized way without needing to constantly query the scrollbar orientation. For example, instead of explicitly coding <code>this.bar.top</code> for a vertical scrollbar and <code>this.bar.left</code> for a horizontal scrollbar, simply code <code>this.bar[this.oh.leading]</code> instead. See the <a href="global.html#orientationHashType"><code>orientationHashType</code></a> definition for details.</p>
+<p>This object is useful externally for coding generalized <a href="global.html#finbarOnChange"><code>finbarOnChange</code></a> event handler functions that serve both horizontal and vertical scrollbars.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="global.html#orientationHashType">orientationHashType</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="onchange"><span class="type-signature"></span>onchange<span class="type-signature"> :function|null</span></h4>
+
+
+<p class="summary"><p>Callback for scroll events.</p></p>
+
+
+
+<div class="description">
+    <p>Set by the constructor via the similarly named property in the <a href="global.html#finbarOptions"><code>finbarOptions</code></a> object. After instantiation, <code>this.onchange</code> may be updated directly.</p>
+<p>This event handler is called whenever the value of the scrollbar is changed through user interaction. The typical use case is when the content is scrolled. It is called with the <code>FinBar</code> object as its context and the current value of the scrollbar (its index, rounded) as the only parameter.</p>
+<p>Set this property to <code>null</code> to stop emitting such events.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">function</span>
+|
+
+<span class="param-type">null</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="orientation"><span class="type-signature"></span>orientation<span class="type-signature"> :string</span></h4>
+
+
+<p class="summary"><p>The scrollbar orientation.</p></p>
+
+
+
+<div class="description">
+    <p>Set by the constructor to either <code>'vertical'</code> or <code>'horizontal'</code>. See the similarly named property in the <a href="global.html#finbarOptions"><code>finbarOptions</code></a> object.</p>
+<p>Useful values are <code>'vertical'</code> (the default) or <code>'horizontal'</code>.</p>
+<p>Setting this property resets <code>this.oh</code> and <code>this.deltaProp</code> and changes the class names so as to reposition the scrollbar as per the CSS rules for the new orientation.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">string</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>'vertical'</li>
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="paging"><span class="type-signature">(readonly) </span>paging<span class="type-signature"> :boolean|object</span></h4>
+
+
+<p class="summary"><p>Enable page up/dn clicks.</p></p>
+
+
+
+<div class="description">
+    <p>Set by the constructor. See the similarly named property in the <a href="global.html#finbarOptions"><code>finbarOptions</code></a> object.</p>
+<p>If truthy, listen for clicks in page-up and page-down regions of scrollbar.</p>
+<p>If an object, call <code>.paging.up()</code> on page-up clicks and <code>.paging.down()</code> will be called on page-down clicks.</p>
+<p>Changing the truthiness of this value after instantiation currently has no effect.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">boolean</span>
+|
+
+<span class="param-type">object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="range"><span class="type-signature"></span>range<span class="type-signature"> :<a href="global.html#rangeType">rangeType</a></span></h4>
+
+
+<p class="summary"><p>Setter for the minimum and maximum scroll values.</p></p>
+
+
+
+<div class="description">
+    <p>Set by the constructor. These values are the limits for <code>index</code>.</p>
+<p>The setter accepts an object with exactly two numeric properties: <code>.min</code> which must be less than <code>.max</code>. The values are extracted and the object is discarded.</p>
+<p>The getter returns a new object with <code>.min</code> and '.max`.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="global.html#rangeType">rangeType</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="style"><span class="type-signature"></span>style<span class="type-signature"> :<a href="global.html#finbarStyles">finbarStyles</a></span></h4>
+
+
+<p class="summary"><p>Additional scrollbar styles.</p></p>
+
+
+
+<div class="description">
+    <p>See type definition for more details. These styles are applied directly to the scrollbar's <code>bar</code> element.</p>
+<p>Values are adjusted as follows before being applied to the element:</p>
+<ol>
+<li>Included &quot;pseudo-property&quot; names from the scrollbar's orientation hash, <a href="FinBar.html#oh"><code>oh</code></a>, are translated to actual property names before being applied.</li>
+<li>When there are margins, percentages are translated to absolute pixel values because CSS ignores margins in its percentage calculations.</li>
+<li>If you give a value without a unit (a raw number), &quot;px&quot; unit is appended.</li>
+</ol>
+<p>General notes:</p>
+<ol>
+<li>It is always preferable to specify styles via a stylesheet. Only set this property when you need to specifically override (a) stylesheet value(s).</li>
+<li>Can be set directly or via calls to the <a href="FinBar.html#resize"><code>resize</code></a> method.</li>
+<li>Should only be set after the scrollbar has been inserted into the DOM.</li>
+<li>Before applying these new values to the element, <em>all</em> in-line style values are reset (by removing the element's <code>style</code> attribute), exposing inherited values (from stylesheets).</li>
+<li>Empty object has no effect.</li>
+<li>Falsey value in place of object has no effect.</li>
+</ol>
+<blockquote>
+<p>CAVEAT: Do not attempt to treat the object you assign to this property as if it were <code>this.bar.style</code>. Specifically, changing this object after assigning it will have no effect on the scrollbar. You must assign it again if you want it to have an effect.</p>
+</blockquote>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="global.html#finbarStyles">finbarStyles</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="FinBar.html#barStyles"><code>barStyles</code></a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="thumb"><span class="type-signature"></span>thumb<span class="type-signature"> :Element</span></h4>
+
+
+<p class="summary"><p>The generated scrollbar thumb element.</p></p>
+
+
+
+<div class="description">
+    <p>The thumb element's parent element is always the <a href="FinBar.html#bar"><code>bar</code></a> element.</p>
+<p>This property is typically referenced internally only. The size and position of the thumb element is maintained by <code>_calcThumb()</code>.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Element</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="foreshortenBy"><span class="type-signature"></span>foreshortenBy<span class="signature">(otherFinBar)</span><span class="type-signature"> &rarr; {<a href="FinBar.html">FinBar</a>}</span></h4>
+
+    
+    <p class="summary"><p>Shorten leading end of scrollbar by thickness of some other scrollbar.</p></p>
+    
+
+
+
+<div class="description">
+    <p>Supports non-classical scrollbar scenarios where vertical scroll bar may be on left and horizontal scrollbar may be on top, in which case you want to shorten the &quot;leading end&quot; rather than the trailing end.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>otherFinBar</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="FinBar.html">FinBar</a></span>
+|
+
+<span class="param-type">null</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Other scrollbar to avoid by shortening this one; <code>null</code> removes the trailing space</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="FinBar.html#shortenBy"><code>shortenBy</code></a>.</li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>For chaining</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="FinBar.html">FinBar</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="remove"><span class="type-signature"></span>remove<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+    <p class="summary"><p>Remove the scrollbar.</p></p>
+    
+
+
+
+<div class="description">
+    <p>Unhooks all the event handlers and then removes the element from the DOM. Always call this method prior to disposing of the scrollbar object.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="resize"><span class="type-signature"></span>resize<span class="signature">(increment<span class="signature-attributes">opt</span>, barStyles<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="FinBar.html">FinBar</a>}</span></h4>
+
+    
+    <p class="summary"><p>Recalculate thumb position.</p></p>
+    
+
+
+
+<div class="description">
+    <p>This method recalculates the thumb size and position. Call it once after inserting your scrollbar into the DOM, and repeatedly while resizing the scrollbar (which typically happens when the scrollbar's parent is resized by user.</p>
+<blockquote>
+<p>This function shifts args if first arg omitted.</p>
+</blockquote>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>increment</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    this.increment
+                
+                </td>
+            
+
+            <td class="description last"><p>Resets <code>increment</code> (see).</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>barStyles</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#finbarStyles">finbarStyles</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    this.barStyles
+                
+                </td>
+            
+
+            <td class="description last"><p>(See type definition for details.) Scrollbar styles to be applied to the bar element.</p>
+<p>Only specify a <code>barStyles</code> object when you need to override stylesheet values. If provided, becomes the new default (<code>this.barStyles</code>), for use as a default on subsequent calls.</p>
+<p>It is generally the case that the scrollbar's new position is sufficiently described by the current styles. Therefore, it is unusual to need to provide a <code>barStyles</code> object on every call to <code>resize</code>.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Self for chaining.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="FinBar.html">FinBar</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="shortenBy"><span class="type-signature"></span>shortenBy<span class="signature">(otherFinBar)</span><span class="type-signature"> &rarr; {<a href="FinBar.html">FinBar</a>}</span></h4>
+
+    
+    <p class="summary"><p>Shorten trailing end of scrollbar by thickness of some other scrollbar.</p></p>
+    
+
+
+
+<div class="description">
+    <p>In the &quot;classical&quot; scenario where vertical scroll bar is on the right and horizontal scrollbar is on the bottom, you want to shorten the &quot;trailing end&quot; (bottom and right ends, respectively) of at least one of them so they don't overlay.</p>
+<p>This convenience function is an programmatic alternative to hardcoding the correct style with the correct value in your stylesheet; or setting the correct style with the correct value in the <a href="FinBar.html#barStyles"><code>barStyles</code></a> object.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>otherFinBar</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="FinBar.html">FinBar</a></span>
+|
+
+<span class="param-type">null</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Other scrollbar to avoid by shortening this one; <code>null</code> removes the trailing space</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="FinBar.html#foreshortenBy"><code>foreshortenBy</code></a>.</li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>For chaining</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="FinBar.html">FinBar</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="shortenEndBy"><span class="type-signature"></span>shortenEndBy<span class="signature">(whichEnd, otherFinBar)</span><span class="type-signature"> &rarr; {<a href="FinBar.html">FinBar</a>}</span></h4>
+
+    
+    <p class="summary"><p>Generalized shortening function.</p></p>
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>whichEnd</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>a CSS style property name or an orientation hash name that translates to a CSS style property name.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>otherFinBar</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="FinBar.html">FinBar</a></span>
+|
+
+<span class="param-type">null</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Other scrollbar to avoid by shortening this one; <code>null</code> removes the trailing space</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="FinBar.html#shortenBy"><code>shortenBy</code></a>.</li>
+        
+            <li><a href="FinBar.html#foreshortenBy"><code>foreshortenBy</code></a>.</li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>For chaining</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="FinBar.html">FinBar</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    &copy; 2015-2018 <a href="https://openfin.co" target="_blank">Openfin</a> and <a href="https://github.com/fin-hypergrid" target="_blank">The Hypergrid Authors</a>. All Rights Reserved.
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
