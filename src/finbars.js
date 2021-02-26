@@ -700,8 +700,11 @@ var handlersToBeBound = {
 
     onwheel: function (evt) {
         this.index += evt[this.deltaProp] * this[this.deltaProp + 'Factor'] * this.normal;
-        evt.stopPropagation();
-        evt.preventDefault();
+
+        if (this.range && this.range.min < this.index < this.range.max) {
+            evt.stopPropagation();
+            evt.preventDefault();
+        }
     },
 
     onclick: function (evt) {
